@@ -7,7 +7,7 @@
       "#/*": ["./apps/web-ele/src/*"]
     }
   },
-  "references": [{ "path": "./tsconfig.node.json" }],
+  "references": [{ "path": "./tsconfig.vite.json" }],
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
