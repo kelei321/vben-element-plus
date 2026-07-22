@@ -37,14 +37,38 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Prepare validation logs
+        run: mkdir -p .ci-logs
+
       - name: Lint
-        run: pnpm lint
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm lint 2>&1 | tee .ci-logs/lint.log
 
       - name: Typecheck
-        run: pnpm check:type
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm check:type 2>&1 | tee .ci-logs/typecheck.log
 
       - name: Unit tests
-        run: pnpm test:unit
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm test:unit 2>&1 | tee .ci-logs/unit-tests.log
 
       - name: Build Element Plus app
-        run: pnpm build:ele
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm build:ele 2>&1 | tee .ci-logs/build-ele.log
+
+      - name: Upload failure logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-logs
+          path: .ci-logs
+          if-no-files-found: ignore
+          retention-days: 7
