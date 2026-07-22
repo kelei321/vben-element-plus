@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate Vben 5.5.9 baseline
+    name: Validate root Element Plus app
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -80,23 +80,23 @@ jobs:
         if: steps.lint.outcome == 'failure'
         run: exit 1
 
-      - name: Typecheck
+      - name: Typecheck root app
         shell: bash
         run: |
           set -o pipefail
-          pnpm check:type 2>&1 | tee .ci-logs/typecheck.log
+          pnpm typecheck 2>&1 | tee .ci-logs/typecheck.log
 
       - name: Unit tests
         shell: bash
         run: |
           set -o pipefail
-          pnpm test:unit 2>&1 | tee .ci-logs/unit-tests.log
+          pnpm test 2>&1 | tee .ci-logs/unit-tests.log
 
-      - name: Build Element Plus app
+      - name: Build root app
         shell: bash
         run: |
           set -o pipefail
-          pnpm build:ele 2>&1 | tee .ci-logs/build-ele.log
+          pnpm build 2>&1 | tee .ci-logs/build.log
 
       - name: Upload failure logs
         if: failure()
