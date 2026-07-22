@@ -75,12 +75,7 @@ jobs:
           pnpm build 2>&1 | tee .ci-logs/build.log
 
       - name: Report validation failures
-        if: >-
-          github.event_name == 'pull_request' &&
-          (steps.lint.outcome == 'failure' ||
-          steps.typecheck.outcome == 'failure' ||
-          steps.test.outcome == 'failure' ||
-          steps.build.outcome == 'failure')
+        if: always() && github.event_name == 'pull_request'
         env:
           BUILD_OUTCOME: ${{ steps.build.outcome }}
           GH_TOKEN: ${{ github.token }}
@@ -90,6 +85,8 @@ jobs:
           TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
         shell: bash
         run: |
+          failed=false
+
           {
             echo '<!-- vben-element-plus-ci-failure -->'
             echo '### CI validation failure'
@@ -104,6 +101,7 @@ jobs:
                 return
               fi
 
+              failed=true
               echo "**Failed step:** \`$command\`"
               echo
               echo '<details><summary>Last 120 log lines</summary>'
@@ -121,28 +119,26 @@ jobs:
             append_failure "$BUILD_OUTCOME" 'pnpm build' '.ci-logs/build.log'
           } > .ci-logs/pr-comment.md
 
+          if [ "$failed" = 'false' ]; then
+            exit 0
+          fi
+
           gh pr comment "$PR_NUMBER" \
             --edit-last \
             --create-if-none \
             --body-file .ci-logs/pr-comment.md
 
-      - name: Upload failure logs
-        if: >-
-          steps.lint.outcome == 'failure' ||
-          steps.typecheck.outcome == 'failure' ||
-          steps.test.outcome == 'failure' ||
-          steps.build.outcome == 'failure'
-        uses: actions/upload-artifact@v4
-        with:
-          name: validation-logs
-          path: .ci-logs
-          if-no-files-found: ignore
-          retention-days: 7
-
       - name: Enforce validation results
-        if: >-
-          steps.lint.outcome == 'failure' ||
-          steps.typecheck.outcome == 'failure' ||
-          steps.test.outcome == 'failure' ||
-          steps.build.outcome == 'failure'
-        run: exit 1
+        if: always()
+        env:
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          LINT_OUTCOME: ${{ steps.lint.outcome }}
+          TEST_OUTCOME: ${{ steps.test.outcome }}
+          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
+        run: |
+          if [ "$LINT_OUTCOME" = 'failure' ] || \
+             [ "$TYPECHECK_OUTCOME" = 'failure' ] || \
+             [ "$TEST_OUTCOME" = 'failure' ] || \
+             [ "$BUILD_OUTCOME" = 'failure' ]; then
+            exit 1
+          fi
