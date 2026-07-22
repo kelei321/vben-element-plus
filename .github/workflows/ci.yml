@@ -50,25 +50,75 @@ jobs:
           set -o pipefail
           pnpm lint 2>&1 | tee .ci-logs/lint.log
 
-      - name: Report lint failure
-        if: github.event_name == 'pull_request' && steps.lint.outcome == 'failure'
+      - name: Typecheck root app
+        id: typecheck
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm typecheck 2>&1 | tee .ci-logs/typecheck.log
+
+      - name: Unit tests
+        id: test
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm test 2>&1 | tee .ci-logs/unit-tests.log
+
+      - name: Build root app
+        id: build
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee .ci-logs/build.log
+
+      - name: Report validation failures
+        if: >-
+          github.event_name == 'pull_request' &&
+          (steps.lint.outcome == 'failure' ||
+          steps.typecheck.outcome == 'failure' ||
+          steps.test.outcome == 'failure' ||
+          steps.build.outcome == 'failure')
         env:
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
           GH_TOKEN: ${{ github.token }}
+          LINT_OUTCOME: ${{ steps.lint.outcome }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          TEST_OUTCOME: ${{ steps.test.outcome }}
+          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
         shell: bash
         run: |
           {
             echo '<!-- vben-element-plus-ci-failure -->'
             echo '### CI validation failure'
             echo
-            echo '**Failed step:** `pnpm lint`'
-            echo
-            echo '<details><summary>Last 120 log lines</summary>'
-            echo
-            echo '```text'
-            tail -n 120 .ci-logs/lint.log
-            echo '```'
-            echo '</details>'
+
+            append_failure() {
+              local outcome="$1"
+              local command="$2"
+              local log_file="$3"
+
+              if [ "$outcome" != 'failure' ]; then
+                return
+              fi
+
+              echo "**Failed step:** \`$command\`"
+              echo
+              echo '<details><summary>Last 120 log lines</summary>'
+              echo
+              echo '```text'
+              tail -n 120 "$log_file"
+              echo '```'
+              echo '</details>'
+              echo
+            }
+
+            append_failure "$LINT_OUTCOME" 'pnpm lint' '.ci-logs/lint.log'
+            append_failure "$TYPECHECK_OUTCOME" 'pnpm typecheck' '.ci-logs/typecheck.log'
+            append_failure "$TEST_OUTCOME" 'pnpm test' '.ci-logs/unit-tests.log'
+            append_failure "$BUILD_OUTCOME" 'pnpm build' '.ci-logs/build.log'
           } > .ci-logs/pr-comment.md
 
           gh pr comment "$PR_NUMBER" \
@@ -76,33 +126,23 @@ jobs:
             --create-if-none \
             --body-file .ci-logs/pr-comment.md
 
-      - name: Enforce lint result
-        if: steps.lint.outcome == 'failure'
-        run: exit 1
-
-      - name: Typecheck root app
-        shell: bash
-        run: |
-          set -o pipefail
-          pnpm typecheck 2>&1 | tee .ci-logs/typecheck.log
-
-      - name: Unit tests
-        shell: bash
-        run: |
-          set -o pipefail
-          pnpm test 2>&1 | tee .ci-logs/unit-tests.log
-
-      - name: Build root app
-        shell: bash
-        run: |
-          set -o pipefail
-          pnpm build 2>&1 | tee .ci-logs/build.log
-
       - name: Upload failure logs
-        if: failure()
+        if: >-
+          steps.lint.outcome == 'failure' ||
+          steps.typecheck.outcome == 'failure' ||
+          steps.test.outcome == 'failure' ||
+          steps.build.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
           name: validation-logs
           path: .ci-logs
           if-no-files-found: ignore
           retention-days: 7
+
+      - name: Enforce validation results
+        if: >-
+          steps.lint.outcome == 'failure' ||
+          steps.typecheck.outcome == 'failure' ||
+          steps.test.outcome == 'failure' ||
+          steps.build.outcome == 'failure'
+        run: exit 1
