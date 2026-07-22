@@ -25,10 +25,10 @@
   },
   "type": "module",
   "scripts": {
-    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build --mode production",
-    "build:analyze": "vite build --mode analyze",
+    "build": "pnpm run build:ele && cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build --mode production",
+    "build:analyze": "pnpm run build:ele && vite build --mode analyze",
     "build:docker": "./scripts/deploy/build-local-docker-image.sh",
-    "build:ele": "pnpm run build --filter=@vben/web-ele",
+    "build:ele": "turbo build --filter=@vben/web-ele",
     "changeset": "pnpm exec changeset",
     "check": "pnpm run check:circular && pnpm run check:dep && pnpm run check:type && pnpm check:cspell",
     "check:circular": "vsh check-circular",
