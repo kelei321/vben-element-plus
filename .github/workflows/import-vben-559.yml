@@ -35,7 +35,10 @@ jobs:
       - name: Import baseline source
         shell: bash
         run: |
-          rsync -a --exclude='.git' .upstream/ ./
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github/workflows/' \
+            .upstream/ ./
           rm -rf .upstream
           rm -f .github/workflows/import-vben-559.yml
 
