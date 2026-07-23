@@ -1,9 +1,21 @@
-import type { Router, RouteRecordName, RouteRecordRaw } from 'vue-router';
+type RouteRecordName = string | symbol;
 
-function collectStaticRouteNames(routes: RouteRecordRaw[]): RouteRecordName[] {
+interface RouteRecordLike {
+  children?: RouteRecordLike[];
+  name?: RouteRecordName;
+  path: string;
+}
+
+interface RouterLike {
+  getRoutes: () => Array<{ name?: RouteRecordName }>;
+  hasRoute: (name: RouteRecordName) => boolean;
+  removeRoute: (name: RouteRecordName) => void;
+}
+
+function collectStaticRouteNames(routes: RouteRecordLike[]): RouteRecordName[] {
   const routeNames: RouteRecordName[] = [];
 
-  const visitRoute = (route: RouteRecordRaw) => {
+  const visitRoute = (route: RouteRecordLike) => {
     if (route.name) {
       routeNames.push(route.name);
     } else {
@@ -12,15 +24,15 @@ function collectStaticRouteNames(routes: RouteRecordRaw[]): RouteRecordName[] {
       );
     }
 
-    route.children?.forEach(visitRoute);
+    route.children?.forEach((childRoute) => visitRoute(childRoute));
   };
 
-  routes.forEach(visitRoute);
+  routes.forEach((route) => visitRoute(route));
 
   return routeNames;
 }
 
-function resetStaticRoutes(router: Router, routes: RouteRecordRaw[]) {
+function resetStaticRoutes(router: RouterLike, routes: RouteRecordLike[]) {
   const staticRouteNames = collectStaticRouteNames(routes);
   const { getRoutes, hasRoute, removeRoute } = router;
 
