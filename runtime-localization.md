@@ -24,4 +24,5 @@
 ### 验证
 
 - 新增 DOM 单元测试，覆盖 Loading 不存在和过渡结束后清理两种场景。
-- 完整 lint、typecheck、unit test 和 root build 结果在 PR 最终验证时记录。
+- CI run `29971494647` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
