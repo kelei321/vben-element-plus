@@ -125,6 +125,7 @@
 
 - 开发环境继续从 `import.meta.env.VITE_GLOB_API_URL` 读取 API 地址。
 - 生产环境继续从 `window._VBEN_ADMIN_PRO_APP_CONF_.VITE_GLOB_API_URL` 读取注入配置。
+- 不增加空字符串或默认地址兜底，避免掩盖缺失配置，保持原有失败行为。
 - RequestClient、请求拦截器、Token 刷新、重新认证和错误提示逻辑保持不变。
 - `@vben/hooks` 仍被其他模块使用，本批次不删除该依赖或对应 workspace 源码。
 
