@@ -1,14 +1,46 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { loadScript } from '../resources';
 
 const testJsPath =
   'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js';
+const appendToHead = document.head.append.bind(document.head);
 
 describe('loadScript', () => {
   beforeEach(() => {
     // 每个测试前清空 head，保证环境干净
     document.head.innerHTML = '';
+
+    vi.spyOn(document.head, 'append').mockImplementation((...nodes) => {
+      const scripts: Array<{
+        element: HTMLScriptElement;
+        type: null | string;
+      }> = [];
+
+      for (const node of nodes) {
+        if (node instanceof HTMLScriptElement) {
+          scripts.push({
+            element: node,
+            type: node.getAttribute('type'),
+          });
+          node.type = 'application/json';
+        }
+      }
+
+      appendToHead(...nodes);
+
+      for (const script of scripts) {
+        if (script.type === null) {
+          script.element.removeAttribute('type');
+        } else {
+          script.element.type = script.type;
+        }
+      }
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('should resolve when the script loads successfully', async () => {
