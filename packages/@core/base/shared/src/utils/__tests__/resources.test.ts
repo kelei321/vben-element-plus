@@ -1,11 +1,24 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import { loadScript } from '../resources';
 
 const testJsPath =
   'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js';
 
+let disableJavaScriptFileLoading: boolean;
+
 describe('loadScript', () => {
+  beforeAll(() => {
+    disableJavaScriptFileLoading =
+      window.happyDOM.settings.disableJavaScriptFileLoading;
+    window.happyDOM.settings.disableJavaScriptFileLoading = true;
+  });
+
+  afterAll(() => {
+    window.happyDOM.settings.disableJavaScriptFileLoading =
+      disableJavaScriptFileLoading;
+  });
+
   beforeEach(() => {
     // 每个测试前清空 head，保证环境干净
     document.head.innerHTML = '';
