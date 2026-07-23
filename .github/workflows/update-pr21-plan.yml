@@ -1,0 +1,138 @@
+name: Update PR21 plan
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - synchronize
+
+permissions:
+  contents: write
+
+jobs:
+  update-plan:
+    if: github.event.pull_request.number == 21 && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.1.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Update progress, handoff, and runtime record
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          plan_path = Path('plan.md')
+          text = plan_path.read_text(encoding='utf-8')
+          old_progress = '''#### PR4：迁入 Vben 必要源码（第八批）
+
+          - 状态：已完成，待最终 review 与合并
+          - 实际 PR：#20
+          - 已验证实现提交：`78989d98b0778f16d6aee17039a4e183e3196bf8`
+          - CI：run `29983662138` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+          - changed files：`apps/web-ele/src/bootstrap.ts`、`apps/web-ele/src/access/directive.ts`、`src/access/check-directive-access.ts`、对应单测、迁移记录和本计划
+          - 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
+          - 范围：仅本地化 `v-access` 指令注册和角色/权限码判断；未修改权限 Store、权限组件、路由权限、动态菜单、依赖或锁文件
+          '''
+          new_progress = '''#### PR4：迁入 Vben 必要源码（第八批）
+
+          - 状态：已完成
+          - 实际 PR：#20
+          - 最终 head：`6b1b868219a7fa5ffd7efb30d59499cd740bb47f`
+          - 合并提交：`28ed3bb21a78036efee5d7e852b1917c2b1eb770`
+          - CI：run `29984122945` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+          - changed files：`apps/web-ele/src/bootstrap.ts`、`apps/web-ele/src/access/directive.ts`、`src/access/check-directive-access.ts`、对应单测、迁移记录和本计划
+          - 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
+          - 范围：仅本地化 `v-access` 指令注册和角色/权限码判断；未修改权限 Store、权限组件、路由权限、动态菜单、依赖或锁文件
+
+          #### PR4：迁入 Vben 必要源码（第九批）
+
+          - 状态：进行中
+          - 实际 PR：#21
+          - 当前范围：本地化 Bearer Token 格式化并统一请求头与刷新认证使用，不修改请求客户端、拦截器或认证流程
+          '''
+          if old_progress not in text:
+              raise SystemExit('PR20 progress block not found')
+          text = text.replace(old_progress, new_progress, 1)
+
+          old_handoff = '''- 当前 main：`9f1316cceefa6fb5998b87f6b356dae5177bbae3`
+          - 唯一功能分支：`feat/vben-559-foundation`
+          - 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 本地化全局 Loading；PR #14 本地化偏好覆盖 helper；PR #15 本地化静态路由重置工具；PR #16 本地化登录路由常量；PR #17 本地化路由模块聚合工具；PR #18 本地化 API 地址解析；PR #19 本地化语言目录聚合 helper
+          - 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；Loading、偏好覆盖 helper、路由基础工具、登录路径常量、API 地址解析和语言目录聚合已本地化；其他运行时仍依赖 workspace 包
+          - 当前阶段：PR #20 已完成第八批实现与 CI，等待最终 review 与合并
+          - 当前改动：新增包无关的 `src/access/check-directive-access.ts` 与单测、应用侧 `apps/web-ele/src/access/directive.ts`；`bootstrap.ts` 移除权限指令的运行时 workspace 导入
+          - 下一步：合并 PR #20 后同步唯一功能分支到最新 main，再选择下一个依赖边界清晰的最小运行时单元
+          '''
+          new_handoff = '''- 当前 main：`28ed3bb21a78036efee5d7e852b1917c2b1eb770`
+          - 唯一功能分支：`feat/vben-559-foundation`
+          - 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 本地化全局 Loading；PR #14 本地化偏好覆盖 helper；PR #15 本地化静态路由重置工具；PR #16 本地化登录路由常量；PR #17 本地化路由模块聚合工具；PR #18 本地化 API 地址解析；PR #19 本地化语言目录聚合 helper；PR #20 本地化权限指令
+          - 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；Loading、偏好覆盖 helper、路由基础工具、登录路径常量、API 地址解析、语言目录聚合和权限指令判断已本地化；其他运行时仍依赖 workspace 包
+          - 当前阶段：PR #21 正在本地化 Bearer Token 格式化
+          - 当前改动：新增 `src/core/request/format-bearer-token.ts` 与单测；请求头和刷新认证统一使用本地 helper
+          - 下一步：完成 PR #21 CI、review 和合并，再选择下一个依赖边界清晰的最小运行时单元
+          '''
+          if old_handoff not in text:
+              raise SystemExit('handoff block not found')
+          plan_path.write_text(text.replace(old_handoff, new_handoff, 1), encoding='utf-8')
+
+          runtime_path = Path('runtime-localization.md')
+          runtime = runtime_path.read_text(encoding='utf-8')
+          section = '''
+
+          ## 第九批：Bearer Token 格式化
+
+          ### 迁移内容
+
+          - 将 Token 格式化迁入 `src/core/request/format-bearer-token.ts`。
+          - 请求 Authorization 头和刷新 Token 认证统一使用本地 helper。
+          - 移除 `apps/web-ele/src/api/request.ts` 内部重复的 `formatToken` 定义。
+
+          ### 行为约束
+
+          - 非空 Token 继续格式化为 `Bearer <token>`。
+          - `null` 和空字符串继续返回 `null`。
+          - RequestClient、请求/响应拦截器、Token 刷新、重新认证和错误提示保持不变。
+          - 本批次不修改 `@vben/request` 或认证 Store，也不删除任何 workspace 包。
+
+          ### 验证
+
+          - 新增单元测试，覆盖普通 Token、`null` 和空字符串。
+          - 完整 lint、typecheck、unit test 和 root build 结果在本 PR 最终验证时记录。
+          '''
+          if '## 第九批：Bearer Token 格式化' not in runtime:
+              runtime_path.write_text(runtime.rstrip() + section + '\n', encoding='utf-8')
+          PY
+
+      - name: Format documentation
+        run: pnpm exec prettier plan.md runtime-localization.md --write
+
+      - name: Remove temporary workflow
+        run: rm .github/workflows/update-pr21-plan.yml
+
+      - name: Commit documentation update
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add plan.md runtime-localization.md .github/workflows/update-pr21-plan.yml
+          git commit -m 'docs: update PR21 progress and handoff'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
