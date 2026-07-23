@@ -39,8 +39,12 @@ describe('cloneRoutes', () => {
     const clonedSettings = cloned[0]?.meta?.settings as {
       labels: string[];
     };
+    const clonedChild = cloned[0]?.children?.[0];
+    if (!clonedChild) {
+      throw new Error('Expected cloned child route');
+    }
     clonedSettings.labels.push('secondary');
-    cloned[0]!.children![0]!.path = 'changed';
+    clonedChild.path = 'changed';
 
     expect(route.meta.settings.labels).toEqual(['primary']);
     expect(route.children[0]?.path).toBe('child');
