@@ -159,3 +159,26 @@
 - 新增单元测试，覆盖多文件聚合、异步默认导出加载和不匹配文件忽略。
 - CI run `29981980920` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
 - `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+
+## 第八批：权限指令
+
+### 迁移内容
+
+- 将角色/权限码判断迁入 `src/access/check-directive-access.ts`。
+- 将 `v-access` 注册迁入 `apps/web-ele/src/access/directive.ts`。
+- `apps/web-ele/src/bootstrap.ts` 不再为权限指令运行时导入 `@vben/access`。
+
+### 行为约束
+
+- 前端访问模式且参数为 `role` 时继续使用用户角色判断。
+- 其他模式和参数继续使用权限码判断。
+- 单个字符串和字符串数组继续采用“任一匹配即可访问”的语义。
+- 未提供指令值时继续保留元素；无权限时继续直接移除元素。
+- 权限 Store、偏好、权限组件、路由权限和动态菜单保持不变。
+- `@vben/access` 仍被其他模块使用，本批次不删除该依赖或对应 workspace 源码。
+
+### 验证
+
+- 新增单元测试，覆盖角色模式、权限码模式、拒绝访问和空指令值。
+- CI run `29983662138` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
