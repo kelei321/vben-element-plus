@@ -1,9 +1,9 @@
 interface DirectiveAccessOptions {
-  accessCodes: string[];
+  accessCodes: readonly string[];
   accessMode: string;
   argument?: string;
-  requiredAccess?: string | string[];
-  userRoles: string[];
+  requiredAccess?: string | readonly string[];
+  userRoles: readonly string[];
 }
 
 function checkDirectiveAccess({
