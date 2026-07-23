@@ -66,6 +66,26 @@ describe('generateAccessible', () => {
     });
   });
 
+  it('replaces an existing root child with the same route name', async () => {
+    const existingRoute = { name: 'Users', path: '/users-old' };
+    const router = createRouter([existingRoute]);
+    const replacementRoute = {
+      children: [{ path: '/users/list' }],
+      component: vi.fn(),
+      name: 'Users',
+      path: '/users',
+    };
+    utils.generateRoutesByBackend.mockResolvedValue([replacementRoute]);
+
+    await generateAccessible('backend', {
+      router: router as any,
+      routes: [],
+    } as any);
+
+    expect(router.root.children[0]).toBe(replacementRoute);
+    expect(replacementRoute.component).toBeUndefined();
+  });
+
   it('uses roles for frontend generation and merges mixed mode in order', async () => {
     const router = createRouter();
     const frontendRoute = { name: 'Frontend', path: '/frontend' };
