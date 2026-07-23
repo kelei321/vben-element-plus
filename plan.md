@@ -203,9 +203,13 @@ Playground 独占依赖
 
 #### PR4：迁入 Vben 必要源码（第二批）
 
-- 状态：进行中
+- 状态：已完成，待最终 review 与合并
 - 实际 PR：#14
-- 当前范围：本地化 `defineOverridesPreferences` identity helper，保留应用侧偏好类型约束，不迁移偏好管理器、缓存或持久化逻辑
+- 已验证实现提交：`1041baec6cdff175c78dec931dae953ef72f1174`
+- CI：run `29972414334` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+- changed files：`apps/web-ele/src/preferences.ts`、`src/app/preferences/define-overrides.ts`、对应单测、迁移记录和本计划
+- 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
+- 范围：仅本地化 `defineOverridesPreferences` identity helper；未迁移偏好管理器、缓存或持久化逻辑，未升级依赖或修改锁文件
 
 更新规则：每个 PR 完成目标改动后，必须先更新本节中的状态、实际 PR、最终 head 或合并提交、真实验证结果和范围结论，并同步更新下方“新会话交接”，再进行最终 review 与合并。
 
@@ -217,9 +221,9 @@ Playground 独占依赖
 - 唯一功能分支：`feat/vben-559-foundation`
 - 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 本地化全局 Loading 工具并补 DOM 单测
 - 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；全局 Loading 已本地化；其他运行时仍依赖 workspace 包
-- 当前阶段：PR #14 正在本地化 `defineOverridesPreferences` identity helper
+- 当前阶段：PR #14 已完成第二批实现与 CI，等待最终 review 与合并
 - 当前改动：新增 `src/app/preferences/define-overrides.ts` 与单测；`apps/web-ele/src/preferences.ts` 保留 `Preferences/DeepPartial` 类型约束并移除 helper 的运行时 workspace 导入
-- 下一步：完成 PR #14 CI、review 和合并，再选择下一个依赖边界清晰的最小运行时单元
+- 下一步：合并 PR #14 后同步唯一功能分支到最新 main，再选择下一个依赖边界清晰的最小运行时单元
 - 未完成验证：需要本地运行 `pnpm dev` 和 `pnpm dev:ele`，检查登录、菜单、标签页、权限、全局 Loading 和 Element Plus 页面
 - 硬性约束：不提前升级依赖；不引入 TanStack Form；不重写旧表单；不改变业务行为；不删除尚被引用的 workspace 包；每次 PR 合并前更新执行进度和本交接内容
 
