@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate Vben 5.5.9 baseline
+    name: Validate root Element Plus app
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -50,59 +50,95 @@ jobs:
           set -o pipefail
           pnpm lint 2>&1 | tee .ci-logs/lint.log
 
-      - name: Report lint failure
-        if: github.event_name == 'pull_request' && steps.lint.outcome == 'failure'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+      - name: Typecheck root app
+        id: typecheck
+        continue-on-error: true
         shell: bash
         run: |
+          set -o pipefail
+          pnpm typecheck 2>&1 | tee .ci-logs/typecheck.log
+
+      - name: Unit tests
+        id: test
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm test 2>&1 | tee .ci-logs/unit-tests.log
+
+      - name: Build root app
+        id: build
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee .ci-logs/build.log
+
+      - name: Report validation failures
+        if: always() && github.event_name == 'pull_request'
+        env:
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          GH_TOKEN: ${{ github.token }}
+          LINT_OUTCOME: ${{ steps.lint.outcome }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          TEST_OUTCOME: ${{ steps.test.outcome }}
+          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
+        shell: bash
+        run: |
+          failed=false
+
           {
             echo '<!-- vben-element-plus-ci-failure -->'
             echo '### CI validation failure'
             echo
-            echo '**Failed step:** `pnpm lint`'
-            echo
-            echo '<details><summary>Last 120 log lines</summary>'
-            echo
-            echo '```text'
-            tail -n 120 .ci-logs/lint.log
-            echo '```'
-            echo '</details>'
+
+            append_failure() {
+              local outcome="$1"
+              local command="$2"
+              local log_file="$3"
+
+              if [ "$outcome" != 'failure' ]; then
+                return
+              fi
+
+              failed=true
+              echo "**Failed step:** \`$command\`"
+              echo
+              echo '<details><summary>Last 120 log lines</summary>'
+              echo
+              echo '```text'
+              tail -n 120 "$log_file"
+              echo '```'
+              echo '</details>'
+              echo
+            }
+
+            append_failure "$LINT_OUTCOME" 'pnpm lint' '.ci-logs/lint.log'
+            append_failure "$TYPECHECK_OUTCOME" 'pnpm typecheck' '.ci-logs/typecheck.log'
+            append_failure "$TEST_OUTCOME" 'pnpm test' '.ci-logs/unit-tests.log'
+            append_failure "$BUILD_OUTCOME" 'pnpm build' '.ci-logs/build.log'
           } > .ci-logs/pr-comment.md
+
+          if [ "$failed" = 'false' ]; then
+            exit 0
+          fi
 
           gh pr comment "$PR_NUMBER" \
             --edit-last \
             --create-if-none \
             --body-file .ci-logs/pr-comment.md
 
-      - name: Enforce lint result
-        if: steps.lint.outcome == 'failure'
-        run: exit 1
-
-      - name: Typecheck
-        shell: bash
+      - name: Enforce validation results
+        if: always()
+        env:
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          LINT_OUTCOME: ${{ steps.lint.outcome }}
+          TEST_OUTCOME: ${{ steps.test.outcome }}
+          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
         run: |
-          set -o pipefail
-          pnpm check:type 2>&1 | tee .ci-logs/typecheck.log
-
-      - name: Unit tests
-        shell: bash
-        run: |
-          set -o pipefail
-          pnpm test:unit 2>&1 | tee .ci-logs/unit-tests.log
-
-      - name: Build Element Plus app
-        shell: bash
-        run: |
-          set -o pipefail
-          pnpm build:ele 2>&1 | tee .ci-logs/build-ele.log
-
-      - name: Upload failure logs
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: validation-logs
-          path: .ci-logs
-          if-no-files-found: ignore
-          retention-days: 7
+          if [ "$LINT_OUTCOME" = 'failure' ] || \
+             [ "$TYPECHECK_OUTCOME" = 'failure' ] || \
+             [ "$TEST_OUTCOME" = 'failure' ] || \
+             [ "$BUILD_OUTCOME" = 'failure' ]; then
+            exit 1
+          fi

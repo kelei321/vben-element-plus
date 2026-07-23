@@ -162,6 +162,35 @@ Playground 独占依赖
 
 ## 五、调整后的 PR 顺序
 
+### 执行进度
+
+#### PR1：冻结 Vben 5.5.9 基线
+
+- 状态：已完成
+- 实际 PR：#1
+- 合并提交：`4288ee89ae799674b75bbf5aa75d90550915b2fa`
+- CI：run `29937106014` 的 install、lint、typecheck、unit test、`build:ele` 全部通过
+- 范围：未升级依赖或修改业务逻辑
+
+#### PR2：收敛目标依赖图
+
+- 状态：已完成
+- 实际 PR：#6
+- 合并提交：`09b4f7397cd67dbbbbe2600b932ee1e8301b6901`
+- CI：run `29938398165` 的 install、lint、typecheck、unit test、`build:ele` 全部通过
+- 范围：仅新增范围文档并删除 8 个非 Element 根脚本
+
+#### PR3：建立单仓运行入口
+
+- 状态：已完成
+- 实际 PR：#7
+- 已验证提交：`d26f7d358a75cf4568ffb85236e9b84c31d16d3c`
+- CI：run `29941826836` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+- 本地验证：`pnpm dev` 未运行，需要合并后本地启动并检查登录、菜单、标签页和 Element Plus 页面
+- 范围：建立根入口和配置，继续复用 `apps/web-ele` 与 workspace 依赖；未升级依赖、未修改锁文件、未改写业务逻辑
+
+更新规则：每个 PR 完成目标改动后，必须先更新本节中的状态、实际 PR、最终 head 或合并提交、真实验证结果和范围结论，再进行最终 review 与合并。
+
 ### PR1：冻结 Vben 5.5.9 基线
 
 分支：

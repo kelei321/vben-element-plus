@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@vben/tsconfig/web-app.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "#/*": ["./apps/web-ele/src/*"]
+    },
+    "types": ["vite/client"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "apps/web-ele/src/**/*.ts",
+    "apps/web-ele/src/**/*.tsx",
+    "apps/web-ele/src/**/*.vue",
+    "packages/types/global.d.ts"
+  ]
+}
