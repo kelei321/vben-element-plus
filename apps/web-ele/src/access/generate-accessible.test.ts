@@ -66,6 +66,25 @@ describe('generateAccessible', () => {
     });
   });
 
+  it('registers routes marked outside the basic layout directly', async () => {
+    const router = createRouter();
+    const route = {
+      meta: { noBasicLayout: true },
+      name: 'Standalone',
+      path: '/standalone',
+    };
+    utils.generateRoutesByBackend.mockResolvedValue([route]);
+
+    await generateAccessible('backend', {
+      router: router as any,
+      routes: [],
+    } as any);
+
+    expect(router.root.children).toEqual([]);
+    expect(router.addRoute).toHaveBeenCalledWith(route);
+    expect(router.addRoute).toHaveBeenCalledWith(router.root);
+  });
+
   it('replaces an existing root child with the same route name', async () => {
     const existingRoute = { name: 'Users', path: '/users-old' };
     const router = createRouter([existingRoute]);
