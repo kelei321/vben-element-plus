@@ -28,7 +28,7 @@ describe('generateMenus', () => {
           name: 'Dashboard',
           path: '/dashboard',
         },
-      ],
+      ] as any,
       router as any,
     );
 
@@ -98,7 +98,7 @@ describe('generateMenus', () => {
           path: '/reports',
           redirect: '/reports/overview',
         },
-      ],
+      ] as any,
       router as any,
     );
 
@@ -119,7 +119,7 @@ describe('generateMenus', () => {
           name: 'Docs',
           path: '/docs',
         },
-      ],
+      ] as any,
       router as any,
     );
 
@@ -155,7 +155,7 @@ describe('generateMenus', () => {
           name: 'First',
           path: '/first',
         },
-      ],
+      ] as any,
       router as any,
     );
 
