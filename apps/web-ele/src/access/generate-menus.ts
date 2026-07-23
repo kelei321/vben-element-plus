@@ -67,9 +67,7 @@ function generateMenus(
     };
   });
 
-  menus.sort(
-    (first, second) => (first.order ?? 999) - (second.order ?? 999),
-  );
+  menus.sort((first, second) => (first.order ?? 999) - (second.order ?? 999));
 
   return filterVisibleMenus(menus);
 }
