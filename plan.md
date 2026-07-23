@@ -291,13 +291,24 @@ Playground 独占依赖
 
 #### PR4：迁入 Vben 必要源码（第十批）
 
-- 状态：已完成，待最终 review 与合并
+- 状态：已完成
 - 实际 PR：#22
-- 已验证实现提交：`0e6966256ca0359019990ac6e3ebd543865114ca`
-- CI：run `29988534717` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+- 最终 head：`702e82035b50da0234d002b4bae9de0278e7fc3f`
+- 合并提交：`18afda9e3b1d866027af8f553b4003c8363a4402`
+- CI：run `29989773368` 的 install、lint、根 typecheck、unit test、根 build 全部通过
 - changed files：`apps/web-ele/src/access/generate-accessible.ts`、对应单测、`apps/web-ele/src/router/access.ts`、迁移记录和本计划
 - 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
 - 范围：仅本地化访问路由编排；未修改前后端路由生成算法、菜单生成算法、权限 Store、认证、依赖或锁文件
+
+#### PR4：迁入 Vben 必要源码（第十一批）
+
+- 状态：实现、文档与完整 CI 已完成，待最终 review 与合并
+- 实际 PR：#25
+- 已验证实现提交：`63907251620b6ab77995b46dff1149d6c52e1dcb`
+- CI：run `29993680030` 与 run `29994103565` 的 install、lint、根 typecheck、unit test、根 build全部通过
+- changed files：本地前端路由生成实现与单测、访问路由编排接入与测试、迁移记录和本计划
+- 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
+- 范围：仅本地化前端角色路由过滤与禁止访问组件替换；未修改后端路由生成、菜单生成、权限 Store、认证、依赖或锁文件
 
 更新规则：每个 PR 完成目标改动后，必须先更新本节中的状态、实际 PR、最终 head 或合并提交、真实验证结果和范围结论，并同步更新下方“新会话交接”，再进行最终 review 与合并。
 
@@ -305,13 +316,13 @@ Playground 独占依赖
 
 - 仓库：`kelei321/vben-element-plus`
 - 源码基线：Vben `v5.5.9`，唯一目标应用为 `apps/web-ele`
-- 当前 main：`4670bb76936307c96d7686380fdb2e4bc9caccb1`
+- 当前 main：`5a63f2a3667787ccf122038b08826a405ff718d8`
 - 唯一功能分支：`feat/vben-559-foundation`
-- 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 本地化全局 Loading；PR #14 本地化偏好覆盖 helper；PR #15 本地化静态路由重置工具；PR #16 本地化登录路由常量；PR #17 本地化路由模块聚合工具；PR #18 本地化 API 地址解析；PR #19 本地化语言目录聚合 helper；PR #20 本地化权限指令；PR #21 本地化 Bearer Token 格式化
-- 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；Loading、偏好覆盖 helper、路由基础工具、登录路径常量、API 地址解析、语言目录聚合、权限指令判断和 Bearer Token 格式化已本地化；其他运行时仍依赖 workspace 包
-- 当前阶段：PR #22 已完成第十批实现与 CI，等待最终 review 与合并
-- 当前改动：新增 `apps/web-ele/src/access/generate-accessible.ts` 与单测；`router/access.ts` 移除 `generateAccessible` 的运行时 workspace 导入
-- 下一步：合并 PR #22 后同步唯一功能分支到最新 main，再继续迁移前后端路由生成或菜单算法中的独立边界
+- 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 至 #22 分批本地化全局 Loading、偏好、路由、请求、语言和权限基础能力；独立 PR #26 修复 Happy DOM 资源测试的真实网络访问
+- 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；访问路由编排已经本地化，前端角色路由生成正在从 `@vben/utils` 迁入应用源码；其他运行时仍依赖 workspace 包
+- 当前阶段：PR #25 已完成第十一批实现、迁移记录、计划更新与完整 CI，等待最终 review 与合并
+- 当前改动：新增 `apps/web-ele/src/access/generate-routes-frontend.ts` 与单测；`generate-accessible.ts` 的 frontend/mixed 模式改用本地实现；旧编排测试改为 mock 本地模块
+- 下一步：PR #25 合并后同步唯一功能分支到最新 main，再从后端路由生成或菜单生成中选择一个依赖边界清晰的能力继续迁移
 - 未完成验证：需要本地运行 `pnpm dev` 和 `pnpm dev:ele`，检查登录、菜单、标签页、权限、全局 Loading 和 Element Plus 页面
 - 硬性约束：不提前升级依赖；不引入 TanStack Form；不重写旧表单；不改变业务行为；不删除尚被引用的 workspace 包；每次 PR 合并前更新执行进度和本交接内容
 

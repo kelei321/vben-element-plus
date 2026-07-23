@@ -12,11 +12,12 @@ import {
   cloneDeep,
   generateMenus,
   generateRoutesByBackend,
-  generateRoutesByFrontend,
   isFunction,
   isString,
   mapTree,
 } from '@vben/utils';
+
+import { generateRoutesByFrontend } from './generate-routes-frontend';
 
 async function generateAccessible(
   mode: AccessModeType,

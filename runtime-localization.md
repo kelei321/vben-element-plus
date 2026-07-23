@@ -225,3 +225,26 @@
 - 新增单元测试，覆盖后端路由挂载、`noBasicLayout` 直接注册、同名路由替换、混合模式顺序、角色传递和 redirect 归一化。
 - CI run `29988534717` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
 - `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+
+## 第十一批：前端路由生成
+
+### 迁移内容
+
+- 将 `generateRoutesByFrontend` 与 `hasAuthority` 迁入 `apps/web-ele/src/access/generate-routes-frontend.ts`。
+- `apps/web-ele/src/access/generate-accessible.ts` 的 `frontend` 与 `mixed` 模式改为调用本地前端路由生成函数。
+- 后端路由生成、菜单生成和访问路由编排继续复用现有实现，不在本批次扩大迁移范围。
+
+### 行为约束
+
+- 未声明 `authority` 的路由继续直接保留。
+- 声明多个角色时继续采用任一角色匹配即可访问的语义。
+- 有权限的父路由继续递归过滤无权限子路由，并保持原始顺序。
+- `menuVisibleWithForbidden` 为 true 的无权限路由继续保留，并在提供禁止访问组件时替换为该组件。
+- 后端路由生成、菜单生成、权限 Store、认证、路由定义和业务行为保持不变。
+- 本批次不升级依赖、不修改锁文件，也不删除仍被引用的 workspace 包。
+
+### 验证
+
+- 新增单元测试，覆盖嵌套路由过滤、公开路由、任一角色匹配、禁止访问菜单保留和组件替换。
+- 更新访问路由编排测试，使其验证本地前端路由生成模块的调用与混合模式顺序。
+- CI 尚未在当前最终提交上完成；`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟验证尚未执行。
