@@ -1,0 +1,146 @@
+name: Update PR22 plan
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - synchronize
+
+permissions:
+  contents: write
+
+jobs:
+  update-plan:
+    if: github.event.pull_request.number == 22 && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.16.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Update progress and handoff
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          plan_path = Path('plan.md')
+          text = plan_path.read_text(encoding='utf-8')
+          old_progress = '''#### PR4：迁入 Vben 必要源码（第九批）
+
+          - 状态：已完成，待最终 review 与合并
+          - 实际 PR：#21
+          - 已验证实现提交：`3e7187a841175ed3ef6190f893690c18514cd468`
+          - CI：run `29984951947` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+          - changed files：`apps/web-ele/src/api/request.ts`、`src/core/request/format-bearer-token.ts`、对应单测、迁移记录和本计划
+          - 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
+          - 范围：仅本地化 Bearer Token 格式化；未修改请求客户端、拦截器、Token 刷新、重新认证、错误处理、依赖或锁文件
+          '''
+          new_progress = '''#### PR4：迁入 Vben 必要源码（第九批）
+
+          - 状态：已完成
+          - 实际 PR：#21
+          - 最终 head：`68c5f68c0d66342fc08127a7200b13dcfca91a02`
+          - 合并提交：`4670bb76936307c96d7686380fdb2e4bc9caccb1`
+          - CI：run `29985232203` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+          - changed files：`apps/web-ele/src/api/request.ts`、`src/core/request/format-bearer-token.ts`、对应单测、迁移记录和本计划
+          - 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
+          - 范围：仅本地化 Bearer Token 格式化；未修改请求客户端、拦截器、Token 刷新、重新认证、错误处理、依赖或锁文件
+
+          #### PR4：迁入 Vben 必要源码（第十批）
+
+          - 状态：进行中
+          - 实际 PR：#22
+          - 当前范围：本地化 `generateAccessible` 访问路由编排，继续复用现有前后端路由生成与菜单算法
+          '''
+          if old_progress not in text:
+              raise SystemExit('PR21 progress block not found')
+          text = text.replace(old_progress, new_progress, 1)
+
+          text = text.replace(
+              '- 当前 main：`28ed3bb21a78036efee5d7e852b1917c2b1eb770`',
+              '- 当前 main：`4670bb76936307c96d7686380fdb2e4bc9caccb1`',
+              1,
+          )
+          text = text.replace(
+              '；PR #20 本地化权限指令',
+              '；PR #20 本地化权限指令；PR #21 本地化 Bearer Token 格式化',
+              1,
+          )
+          text = text.replace(
+              'API 地址解析、语言目录聚合和权限指令判断已本地化；其他运行时仍依赖 workspace 包',
+              'API 地址解析、语言目录聚合、权限指令判断和 Bearer Token 格式化已本地化；其他运行时仍依赖 workspace 包',
+              1,
+          )
+          old_handoff = '''- 当前阶段：PR #21 已完成第九批实现与 CI，等待最终 review 与合并
+          - 当前改动：新增 `src/core/request/format-bearer-token.ts` 与单测；请求头和刷新认证统一使用本地 helper
+          - 下一步：合并 PR #21 后同步唯一功能分支到最新 main，再选择下一个依赖边界清晰的最小运行时单元
+          '''
+          new_handoff = '''- 当前阶段：PR #22 正在本地化访问路由编排
+          - 当前改动：新增 `apps/web-ele/src/access/generate-accessible.ts` 与单测；`router/access.ts` 移除 `generateAccessible` 的运行时 workspace 导入
+          - 下一步：完成 PR #22 CI、review 和合并，再继续迁移前后端路由生成或菜单算法中的独立边界
+          '''
+          if old_handoff not in text:
+              raise SystemExit('handoff block not found')
+          plan_path.write_text(text.replace(old_handoff, new_handoff, 1), encoding='utf-8')
+
+          runtime_path = Path('runtime-localization.md')
+          runtime = runtime_path.read_text(encoding='utf-8')
+          section = '''
+
+          ## 第十批：访问路由编排
+
+          ### 迁移内容
+
+          - 将 `generateAccessible` 迁入 `apps/web-ele/src/access/generate-accessible.ts`。
+          - `apps/web-ele/src/router/access.ts` 不再为访问路由编排运行时导入 `@vben/access`。
+          - 继续复用 `@vben/utils` 中现有前端路由、后端路由和菜单生成算法，本批次不迁移算法本体。
+
+          ### 行为约束
+
+          - `backend`、`frontend` 和 `mixed` 三种访问模式的生成顺序保持不变。
+          - 根布局下的动态路由添加、同名一级路由替换和根路由重新注册保持不变。
+          - 子路由自动 redirect、keep-alive 组件命名和菜单生成保持不变。
+          - 权限 Store、偏好、认证、路由定义和菜单数据接口保持不变。
+          - `@vben/access` 与 `@vben/utils` 仍被其他模块使用，本批次不删除相关 workspace 源码。
+
+          ### 验证
+
+          - 新增单元测试，覆盖后端路由挂载、混合模式顺序、角色传递和 redirect 归一化。
+          - 完整 lint、typecheck、unit test 和 root build 结果在本 PR 最终验证时记录。
+          '''
+          if '## 第十批：访问路由编排' not in runtime:
+              runtime_path.write_text(runtime.rstrip() + section + '\n', encoding='utf-8')
+          PY
+
+      - name: Format documentation
+        run: pnpm exec prettier plan.md runtime-localization.md --write
+
+      - name: Remove temporary workflow
+        run: rm .github/workflows/update-pr22-plan.yml
+
+      - name: Commit documentation update
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add plan.md runtime-localization.md .github/workflows/update-pr22-plan.yml
+          git commit -m 'docs: update PR22 progress and handoff'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
