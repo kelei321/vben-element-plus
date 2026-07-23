@@ -33,9 +33,7 @@ describe('normalizeGeneratedRoutes', () => {
 
     expect(result).not.toBe(routes);
     expect(result[0]?.redirect).toBe('/reports/overview');
-    expect(result[0]?.children?.[0]?.redirect).toBe(
-      '/reports/overview/detail',
-    );
+    expect(result[0]?.children?.[0]?.redirect).toBe('/reports/overview/detail');
     expect(result[1]?.redirect).toBe('/settings/custom');
     expect(result[2]?.redirect).toBeUndefined();
   });
