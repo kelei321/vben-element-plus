@@ -17,6 +17,7 @@ import { ElMessage } from 'element-plus';
 import { useAuthStore } from '#/store';
 
 import { resolveApiUrl } from '../../../../src/app/config/resolve-api-url';
+import { formatBearerToken } from '../../../../src/core/request/format-bearer-token';
 import { refreshTokenApi } from './core';
 
 const apiURL = resolveApiUrl(import.meta.env, import.meta.env.PROD);
@@ -55,16 +56,12 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
     return newToken;
   }
 
-  function formatToken(token: null | string) {
-    return token ? `Bearer ${token}` : null;
-  }
-
   // 请求头处理
   client.addRequestInterceptor({
     fulfilled: async (config) => {
       const accessStore = useAccessStore();
 
-      config.headers.Authorization = formatToken(accessStore.accessToken);
+      config.headers.Authorization = formatBearerToken(accessStore.accessToken);
       config.headers['Accept-Language'] = preferences.app.locale;
       return config;
     },
@@ -86,7 +83,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
       doReAuthenticate,
       doRefreshToken,
       enableRefreshToken: preferences.app.enableRefreshToken,
-      formatToken,
+      formatToken: formatBearerToken,
     }),
   );
 
