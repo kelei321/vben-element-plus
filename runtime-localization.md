@@ -149,6 +149,7 @@
 - `import.meta.glob('./langs/**/*.json')` 和现有目录正则保持不变。
 - 同一语言目录下的 JSON 文件继续按文件名聚合到 `default` 消息对象。
 - 不匹配目录规则的文件继续忽略。
+- 根 helper 使用结构化异步导入类型，不为根包新增 `vue-i18n` 依赖。
 - Day.js、Element Plus 语言包加载和默认语言来源保持不变。
 - `@vben/locales` 仍提供 `$t`、类型和 I18n 初始化，本批次不删除该依赖或对应 workspace 源码。
 
