@@ -8,7 +8,6 @@ import type {
 type MenuRouteRecord = RouteRecordRaw & {
   parent?: string;
   parents?: string[];
-  path?: any;
 };
 
 function generateMenus(
@@ -50,7 +49,9 @@ function generateMenus(
       });
     }
 
-    const resultPath = hideChildrenInMenu ? redirect || path : link || path;
+    const resultPath = (hideChildrenInMenu
+      ? redirect || path
+      : link || path) as MenuRecordRaw['path'];
 
     return {
       activeIcon,
@@ -68,8 +69,8 @@ function generateMenus(
     };
   });
 
-  menus.sort((first, second) =>
-    (first.order ?? 999) - (second.order ?? 999),
+  menus.sort(
+    (first, second) => (first.order ?? 999) - (second.order ?? 999),
   );
 
   return filterVisibleMenus(menus);
