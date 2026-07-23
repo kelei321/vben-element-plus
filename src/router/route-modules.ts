@@ -3,6 +3,7 @@ type RouteRecordName = string | symbol;
 interface RouteTreeLike {
   children?: RouteTreeLike[];
   name?: RouteRecordName;
+  path?: string;
 }
 
 interface RouteModule<Route> {
