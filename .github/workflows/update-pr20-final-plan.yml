@@ -78,9 +78,6 @@ jobs:
           )
           PY
 
-      - name: Format documentation
-        run: pnpm exec prettier plan.md runtime-localization.md --write
-
       - name: Remove temporary workflow
         run: rm .github/workflows/update-pr20-final-plan.yml
 
