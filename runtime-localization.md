@@ -47,3 +47,25 @@
 - 新增单元测试，确认 helper 返回原始对象引用。
 - CI run `29972414334` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
 - `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+
+## 第三批：静态路由重置工具
+
+### 迁移内容
+
+- 将 `resetStaticRoutes` 迁入 `src/router/reset-routes.ts`。
+- 将该工具实际需要的静态路由名称递归收集逻辑收敛到同一文件，不迁移整个通用树工具模块。
+- `apps/web-ele/src/router/index.ts` 不再运行时导入 `@vben/utils` 中的路由重置函数。
+
+### 行为约束
+
+- 静态路由及其嵌套子路由按照 `name` 形成保留名单。
+- 未指定 `name` 的静态路由继续输出相同警告。
+- 只删除已注册、具有名称且不在静态保留名单中的路由。
+- 路由 history、scroll behavior、守卫和导出接口保持不变。
+- `@vben/utils` 仍被其他模块使用，本批次不删除该依赖或对应 workspace 源码。
+
+### 验证
+
+- 新增单元测试，覆盖嵌套静态路由保留、动态路由删除和未命名路由警告。
+- CI run `29973662522` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
