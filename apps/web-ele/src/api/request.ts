@@ -3,7 +3,6 @@
  */
 import type { RequestClientOptions } from '@vben/request';
 
-import { useAppConfig } from '@vben/hooks';
 import { preferences } from '@vben/preferences';
 import {
   authenticateResponseInterceptor,
@@ -17,16 +16,16 @@ import { ElMessage } from 'element-plus';
 
 import { useAuthStore } from '#/store';
 
+import { resolveApiUrl } from '../../../../src/app/config/resolve-api-url';
 import { refreshTokenApi } from './core';
 
-const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
+const apiURL = resolveApiUrl(import.meta.env, import.meta.env.PROD);
 
 function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   const client = new RequestClient({
     ...options,
     baseURL,
   });
-
   /**
    * 重新认证逻辑
    */
