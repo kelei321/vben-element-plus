@@ -112,3 +112,26 @@
 - 新增单元测试，覆盖多模块合并、空模块忽略和嵌套路由名称收集。
 - CI run `29976074463` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
 - `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+
+## 第六批：API 地址解析
+
+### 迁移内容
+
+- 将请求层实际使用的 API 地址解析迁入 `src/app/config/resolve-api-url.ts`。
+- `apps/web-ele/src/api/request.ts` 不再为 `apiURL` 运行时导入 `useAppConfig`。
+- 仅迁移 API 地址读取，不复制钉钉认证等请求层未使用的应用配置。
+
+### 行为约束
+
+- 开发环境继续从 `import.meta.env.VITE_GLOB_API_URL` 读取 API 地址。
+- 生产环境继续从 `window._VBEN_ADMIN_PRO_APP_CONF_.VITE_GLOB_API_URL` 读取注入配置。
+- 直接复用仓库已有的全局 `Window` 配置声明，不重复覆盖全局类型。
+- 不增加空字符串或默认地址兜底，避免掩盖缺失配置，保持原有失败行为。
+- RequestClient、请求拦截器、Token 刷新、重新认证和错误提示逻辑保持不变。
+- `@vben/hooks` 仍被其他模块使用，本批次不删除该依赖或对应 workspace 源码。
+
+### 验证
+
+- 新增单元测试，覆盖开发环境变量和生产全局注入配置两条路径。
+- CI run `29977252094` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。

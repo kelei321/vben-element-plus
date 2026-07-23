@@ -236,13 +236,24 @@ Playground 独占依赖
 
 #### PR4：迁入 Vben 必要源码（第五批）
 
-- 状态：已完成，待最终 review 与合并
+- 状态：已完成
 - 实际 PR：#17
-- 已验证实现提交：`1ec6cfe5dd4f129d7ed8ef119c04a5763b34aebe`
-- CI：run `29976074463` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+- 最终 head：`1a19c2d91f691165420923d53be6ae21bb0aa55c`
+- 合并提交：`817075e9d037d99b58c1803cbb75ee8cbf72e8ac`
+- CI：run `29976332772` 的 install、lint、根 typecheck、unit test、根 build 全部通过
 - changed files：`apps/web-ele/src/router/routes/index.ts`、`src/router/route-modules.ts`、对应单测、迁移记录和本计划
 - 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
 - 范围：仅本地化路由模块合并与名称收集；未修改路由定义、守卫、权限、菜单、动态导入、依赖或锁文件
+
+#### PR4：迁入 Vben 必要源码（第六批）
+
+- 状态：已完成，待最终 review 与合并
+- 实际 PR：#18
+- 已验证实现提交：`c2a8d96b5b21681c6ec918ac1507cfe537703d05`
+- CI：run `29977252094` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+- changed files：`apps/web-ele/src/api/request.ts`、`src/app/config/resolve-api-url.ts`、对应单测、迁移记录和本计划
+- 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
+- 范围：仅本地化 API 地址解析；未修改请求客户端、拦截器、Token 刷新、重新认证、错误处理、依赖或锁文件
 
 更新规则：每个 PR 完成目标改动后，必须先更新本节中的状态、实际 PR、最终 head 或合并提交、真实验证结果和范围结论，并同步更新下方“新会话交接”，再进行最终 review 与合并。
 
@@ -250,13 +261,13 @@ Playground 独占依赖
 
 - 仓库：`kelei321/vben-element-plus`
 - 源码基线：Vben `v5.5.9`，唯一目标应用为 `apps/web-ele`
-- 当前 main：`135baa8b737746f696c325c714081fdad9e86cf0`
+- 当前 main：`817075e9d037d99b58c1803cbb75ee8cbf72e8ac`
 - 唯一功能分支：`feat/vben-559-foundation`
-- 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 本地化全局 Loading；PR #14 本地化偏好覆盖 helper；PR #15 本地化静态路由重置工具；PR #16 本地化登录路由常量
-- 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；Loading、偏好覆盖 helper、路由重置和登录路径常量已本地化；其他运行时仍依赖 workspace 包
-- 当前阶段：PR #17 已完成第五批实现与 CI，等待最终 review 与合并
-- 当前改动：新增包无关的 `src/router/route-modules.ts` 与单测；`apps/web-ele/src/router/routes/index.ts` 移除两项 `@vben/utils` 运行时导入
-- 下一步：合并 PR #17 后同步唯一功能分支到最新 main，再选择下一个依赖边界清晰的最小运行时单元
+- 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 本地化全局 Loading；PR #14 本地化偏好覆盖 helper；PR #15 本地化静态路由重置工具；PR #16 本地化登录路由常量；PR #17 本地化路由模块聚合工具
+- 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；Loading、偏好覆盖 helper、路由基础工具和登录路径常量已本地化；其他运行时仍依赖 workspace 包
+- 当前阶段：PR #18 已完成第六批实现与 CI，等待最终 review 与合并
+- 当前改动：新增 `src/app/config/resolve-api-url.ts` 与双路径单测；`apps/web-ele/src/api/request.ts` 移除 `useAppConfig` 运行时导入
+- 下一步：合并 PR #18 后同步唯一功能分支到最新 main，再选择下一个依赖边界清晰的最小运行时单元
 - 未完成验证：需要本地运行 `pnpm dev` 和 `pnpm dev:ele`，检查登录、菜单、标签页、权限、全局 Loading 和 Element Plus 页面
 - 硬性约束：不提前升级依赖；不引入 TanStack Form；不重写旧表单；不改变业务行为；不删除尚被引用的 workspace 包；每次 PR 合并前更新执行进度和本交接内容
 
