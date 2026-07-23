@@ -49,9 +49,7 @@ function generateMenus(
       });
     }
 
-    const resultPath = (
-      hideChildrenInMenu ? redirect || path : link || path
-    ) as MenuRecordRaw['path'];
+    const resultPath = hideChildrenInMenu ? redirect || path : link || path;
 
     return {
       activeIcon,
@@ -64,7 +62,7 @@ function generateMenus(
       order,
       parent: route.parent,
       parents: route.parents,
-      path: resultPath,
+      path: resultPath as MenuRecordRaw['path'],
       show: !meta.hideInMenu,
     };
   });
