@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { generateAccessible } from './generate-accessible';
+
 const utils = vi.hoisted(() => ({
   cloneDeep: vi.fn((value) => value),
   generateMenus: vi.fn(() => [{ name: 'menu' }]),
@@ -15,15 +17,13 @@ vi.mock('@vben/utils', () => ({
     const visit = (route: any): any => {
       const next = mapper(route);
       if (next.children) {
-        next.children = next.children.map(visit);
+        next.children = next.children.map((child: any) => visit(child));
       }
       return next;
     };
-    return routes.map(visit);
+    return routes.map((route) => visit(route));
   },
 }));
-
-import { generateAccessible } from './generate-accessible';
 
 function createRouter(rootChildren: any[] = []) {
   const root = {
