@@ -302,10 +302,10 @@ Playground 独占依赖
 
 #### PR4：迁入 Vben 必要源码（第十一批）
 
-- 状态：实现与首轮 CI 已完成，待最终 review 与合并
+- 状态：实现、文档与完整 CI 已完成，待最终 review 与合并
 - 实际 PR：#25
 - 已验证实现提交：`63907251620b6ab77995b46dff1149d6c52e1dcb`
-- CI：run `29993680030` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+- CI：run `29993680030` 与 run `29994103565` 的 install、lint、根 typecheck、unit test、根 build全部通过
 - changed files：本地前端路由生成实现与单测、访问路由编排接入与测试、迁移记录和本计划
 - 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
 - 范围：仅本地化前端角色路由过滤与禁止访问组件替换；未修改后端路由生成、菜单生成、权限 Store、认证、依赖或锁文件
@@ -320,7 +320,7 @@ Playground 独占依赖
 - 唯一功能分支：`feat/vben-559-foundation`
 - 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 至 #22 分批本地化全局 Loading、偏好、路由、请求、语言和权限基础能力；独立 PR #26 修复 Happy DOM 资源测试的真实网络访问
 - 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；访问路由编排已经本地化，前端角色路由生成正在从 `@vben/utils` 迁入应用源码；其他运行时仍依赖 workspace 包
-- 当前阶段：PR #25 已完成第十一批实现、首轮完整 CI、迁移记录和本计划更新，等待最终 head CI、review 与合并
+- 当前阶段：PR #25 已完成第十一批实现、迁移记录、计划更新与完整 CI，等待最终 review 与合并
 - 当前改动：新增 `apps/web-ele/src/access/generate-routes-frontend.ts` 与单测；`generate-accessible.ts` 的 frontend/mixed 模式改用本地实现；旧编排测试改为 mock 本地模块
 - 下一步：PR #25 合并后同步唯一功能分支到最新 main，再从后端路由生成或菜单生成中选择一个依赖边界清晰的能力继续迁移
 - 未完成验证：需要本地运行 `pnpm dev` 和 `pnpm dev:ele`，检查登录、菜单、标签页、权限、全局 Loading 和 Element Plus 页面
