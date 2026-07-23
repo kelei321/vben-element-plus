@@ -66,6 +66,25 @@ describe('generateAccessible', () => {
     });
   });
 
+  it('registers generated routes directly when no root layout exists', async () => {
+    const route = { name: 'Standalone', path: '/standalone' };
+    const router = {
+      addRoute: vi.fn(),
+      getRoutes: vi.fn(() => []),
+      removeRoute: vi.fn(),
+    };
+    utils.generateRoutesByBackend.mockResolvedValue([route]);
+
+    await generateAccessible('backend', {
+      router: router as any,
+      routes: [],
+    } as any);
+
+    expect(router.addRoute).toHaveBeenCalledTimes(1);
+    expect(router.addRoute).toHaveBeenCalledWith(route);
+    expect(router.removeRoute).not.toHaveBeenCalled();
+  });
+
   it('registers routes marked outside the basic layout directly', async () => {
     const router = createRouter();
     const route = {
