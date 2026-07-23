@@ -1,5 +1,3 @@
-import type { Router, RouteRecordRaw } from 'vue-router';
-
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetStaticRoutes } from './reset-routes';
@@ -11,7 +9,7 @@ function createRouterStub(routeNames: string[]) {
     getRoutes: () => routeNames.map((name) => ({ name })),
     hasRoute,
     removeRoute,
-  } as unknown as Router;
+  };
 
   return { hasRoute, removeRoute, router };
 }
@@ -27,16 +25,14 @@ describe('resetStaticRoutes', () => {
       'dashboard-detail',
       'dynamic-user',
     ]);
-    const routes: RouteRecordRaw[] = [
+    const routes = [
       {
         path: '/dashboard',
         name: 'dashboard',
-        component: {},
         children: [
           {
             path: 'detail',
             name: 'dashboard-detail',
-            component: {},
           },
         ],
       },
@@ -51,10 +47,9 @@ describe('resetStaticRoutes', () => {
   it('warns when a static route has no name', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     const { router } = createRouterStub([]);
-    const routes: RouteRecordRaw[] = [
+    const routes = [
       {
         path: '/unnamed',
-        component: {},
       },
     ];
 
