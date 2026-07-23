@@ -150,10 +150,12 @@
 - 同一语言目录下的 JSON 文件继续按文件名聚合到 `default` 消息对象。
 - 不匹配目录规则的文件继续忽略。
 - 根 helper 使用结构化异步导入类型，不为根包新增 `vue-i18n` 依赖。
+- 返回类型继续匹配现有 `ImportLocaleFn` 的 `Record<string, string>` 契约。
 - Day.js、Element Plus 语言包加载和默认语言来源保持不变。
 - `@vben/locales` 仍提供 `$t`、类型和 I18n 初始化，本批次不删除该依赖或对应 workspace 源码。
 
 ### 验证
 
 - 新增单元测试，覆盖多文件聚合、异步默认导出加载和不匹配文件忽略。
-- 完整 lint、typecheck、unit test 和 root build 结果在本 PR 最终验证时记录。
+- CI run `29981980920` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
