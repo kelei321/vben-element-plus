@@ -4,8 +4,7 @@ import type {
   RouteRecordRaw,
 } from '@vben/types';
 
-import { cloneDeep } from '@vben/utils';
-
+import { cloneRoutes } from './clone-routes';
 import { generateMenus } from './generate-menus';
 import { generateRoutesByBackend } from './generate-routes-backend';
 import { generateRoutesByFrontend } from './generate-routes-frontend';
@@ -17,7 +16,7 @@ async function generateAccessible(
 ) {
   const { router } = options;
 
-  options.routes = cloneDeep(options.routes);
+  options.routes = cloneRoutes(options.routes);
   const accessibleRoutes = await generateRoutes(mode, options);
   const root = router.getRoutes().find((item) => item.path === '/');
   const names = root?.children?.map((item) => item.name) ?? [];

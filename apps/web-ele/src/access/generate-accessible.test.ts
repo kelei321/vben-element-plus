@@ -11,14 +11,10 @@ const frontend = vi.hoisted(() => ({
 const menus = vi.hoisted(() => ({
   generateMenus: vi.fn(() => [{ name: 'menu' }]),
 }));
-const utils = vi.hoisted(() => ({
-  cloneDeep: vi.fn((value) => value),
-}));
 
 vi.mock('./generate-menus', () => menus);
 vi.mock('./generate-routes-backend', () => backend);
 vi.mock('./generate-routes-frontend', () => frontend);
-vi.mock('@vben/utils', () => utils);
 
 function createRouter(rootChildren: any[] = []) {
   const root = {
@@ -37,6 +33,33 @@ function createRouter(rootChildren: any[] = []) {
 describe('generateAccessible', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it('clones configured routes before frontend generation', async () => {
+    const router = createRouter();
+    const route = {
+      meta: { title: 'Original' },
+      name: 'OriginalRoute',
+      path: '/original',
+    };
+    const routes = [route];
+    frontend.generateRoutesByFrontend.mockImplementationOnce(
+      async (generatedRoutes: any[]) => {
+        generatedRoutes[0].meta.title = 'Changed';
+        return generatedRoutes;
+      },
+    );
+
+    await generateAccessible('frontend', {
+      roles: [],
+      router: router as any,
+      routes,
+    } as any);
+
+    const clonedRoutes = frontend.generateRoutesByFrontend.mock.calls[0]?.[0];
+    expect(clonedRoutes).not.toBe(routes);
+    expect(clonedRoutes[0]).not.toBe(route);
+    expect(route.meta.title).toBe('Original');
   });
 
   it('generates backend routes and mounts them under the root layout', async () => {

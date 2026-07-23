@@ -332,3 +332,28 @@
 - 保留访问路由编排测试中的 redirect 集成覆盖，并将 `@vben/utils` mock 收敛为仅 `cloneDeep`。
 - CI run `30016422758` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
 - `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+
+## 第十五批：路由深拷贝
+
+### 迁移内容
+
+- 将访问路由生成前使用的深拷贝收敛到 `apps/web-ele/src/access/clone-routes.ts`。
+- `apps/web-ele/src/access/generate-accessible.ts` 改为调用本地路由深拷贝函数，不再为 `cloneDeep` 运行时导入 `@vben/utils`。
+- 仅实现路由配置需要的对象图拷贝，不迁移整个通用工具包，也不修改路由生成算法。
+
+### 行为约束
+
+- 路由数组、路由对象、嵌套 `children` 和嵌套 `meta` 继续生成独立副本。
+- 组件函数、导航守卫和其他函数值继续保留原引用。
+- 共享引用和循环引用继续保持原有对象图关系。
+- `Date`、`RegExp`、`Map`、`Set`、自定义对象原型和可枚举 Symbol 属性继续保留相应语义。
+- 不支持的宿主对象按引用保留，避免 `structuredClone` 对函数抛错或意外改变组件行为。
+- 前端路由生成、后端路由生成、菜单生成、生成路由归一化、路由挂载、权限 Store、认证和业务行为保持不变。
+- 本批次不升级依赖、不修改锁文件，也不删除仍被引用的 workspace 包。
+
+### 验证
+
+- 新增单元测试，覆盖路由数组、路由对象、嵌套子路由、嵌套元数据、函数引用、共享引用、循环引用、内置对象、自定义原型和 Symbol 属性。
+- 更新访问路由编排测试，验证前端路由生成前使用独立的路由配置副本。
+- CI run `30019981822` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
