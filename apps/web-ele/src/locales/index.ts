@@ -6,16 +6,14 @@ import type { LocaleSetupOptions, SupportedLanguagesType } from '@vben/locales';
 
 import { ref } from 'vue';
 
-import {
-  $t,
-  setupI18n as coreSetup,
-  loadLocalesMapFromDir,
-} from '@vben/locales';
+import { $t, setupI18n as coreSetup } from '@vben/locales';
 import { preferences } from '@vben/preferences';
 
 import dayjs from 'dayjs';
 import enLocale from 'element-plus/es/locale/lang/en';
 import defaultLocale from 'element-plus/es/locale/lang/zh-cn';
+
+import { loadLocalesMapFromDir } from '../../../../src/locales/load-locales-map-from-dir';
 
 const elementLocale = ref<Language>(defaultLocale);
 
