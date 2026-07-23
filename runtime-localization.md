@@ -182,3 +182,23 @@
 - 新增单元测试，覆盖角色模式、权限码模式、拒绝访问和空指令值。
 - CI run `29983662138` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
 - `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+
+## 第九批：Bearer Token 格式化
+
+### 迁移内容
+
+- 将 Token 格式化迁入 `src/core/request/format-bearer-token.ts`。
+- 请求 Authorization 头和刷新 Token 认证统一使用本地 helper。
+- 移除 `apps/web-ele/src/api/request.ts` 内部重复的 `formatToken` 定义。
+
+### 行为约束
+
+- 非空 Token 继续格式化为 `Bearer <token>`。
+- `null` 和空字符串继续返回 `null`。
+- RequestClient、请求/响应拦截器、Token 刷新、重新认证和错误提示保持不变。
+- 本批次不修改 `@vben/request` 或认证 Store，也不删除任何 workspace 包。
+
+### 验证
+
+- 新增单元测试，覆盖普通 Token、`null` 和空字符串。
+- 完整 lint、typecheck、unit test 和 root build 结果在本 PR 最终验证时记录。
