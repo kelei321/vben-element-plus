@@ -20,12 +20,15 @@ function cloneValue<T>(value: T, seen: WeakMap<object, unknown>): T {
   }
 
   if (value instanceof Date) {
-    return new Date(value.getTime()) as T;
+    const cloned = new Date(value.getTime());
+    seen.set(value, cloned);
+    return cloned as T;
   }
 
   if (value instanceof RegExp) {
     const cloned = new RegExp(value.source, value.flags);
     cloned.lastIndex = value.lastIndex;
+    seen.set(value, cloned);
     return cloned as T;
   }
 
@@ -52,11 +55,17 @@ function cloneValue<T>(value: T, seen: WeakMap<object, unknown>): T {
     return value;
   }
 
-  const cloned = isArray ? [] : Object.create(Object.getPrototypeOf(value));
+  const source = value as Record<PropertyKey, unknown>;
+  const cloned = (isArray
+    ? []
+    : Object.create(Object.getPrototypeOf(value))) as Record<
+    PropertyKey,
+    unknown
+  >;
   seen.set(value, cloned);
 
   for (const key of getEnumerableKeys(value)) {
-    cloned[key] = cloneValue(value[key as keyof T], seen);
+    cloned[key] = cloneValue(source[key], seen);
   }
 
   return cloned as T;
