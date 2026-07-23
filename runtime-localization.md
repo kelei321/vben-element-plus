@@ -40,6 +40,7 @@
 - helper 继续原样返回传入的偏好覆盖对象。
 - 偏好对象结构、应用名称来源和初始化调用保持不变。
 - 本批次只移除一个运行时 helper 导入；`initPreferences` 仍由现有 workspace 包提供。
+- `@vben/preferences` 包仍被应用启动流程使用，本批次不删除该依赖或任何 workspace 源码。
 
 ### 验证
 
