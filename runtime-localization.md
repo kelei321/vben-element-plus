@@ -26,3 +26,22 @@
 - 新增 DOM 单元测试，覆盖 Loading 不存在和过渡结束后清理两种场景。
 - CI run `29971494647` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
 - `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+
+## 第二批：偏好覆盖定义 helper
+
+### 迁移内容
+
+- 将 `defineOverridesPreferences` 迁入 `src/app/preferences/define-overrides.ts`。
+- `apps/web-ele/src/preferences.ts` 不再运行时导入该 workspace helper。
+- 应用侧继续通过 `Preferences` 和 `DeepPartial` 类型约束偏好覆盖对象，不迁移偏好管理器、缓存或持久化逻辑。
+
+### 行为约束
+
+- helper 继续原样返回传入的偏好覆盖对象。
+- 偏好对象结构、应用名称来源和初始化调用保持不变。
+- 本批次只移除一个运行时 helper 导入；`initPreferences` 仍由现有 workspace 包提供。
+
+### 验证
+
+- 新增单元测试，确认 helper 返回原始对象引用。
+- 完整 lint、typecheck、unit test 和 root build 结果在本 PR 最终验证时记录。
