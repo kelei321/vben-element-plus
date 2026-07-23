@@ -200,5 +200,6 @@
 
 ### 验证
 
-- 新增单元测试，覆盖普通 Token、`null` 和空字符串。
-- 完整 lint、typecheck、unit test 和 root build 结果在本 PR 最终验证时记录。
+- 新增单元测试，覆盖普通 Token、`null`、空字符串和原始内容保留。
+- CI run `29984951947` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。

@@ -280,9 +280,13 @@ Playground 独占依赖
 
 #### PR4：迁入 Vben 必要源码（第九批）
 
-- 状态：进行中
+- 状态：已完成，待最终 review 与合并
 - 实际 PR：#21
-- 当前范围：本地化 Bearer Token 格式化并统一请求头与刷新认证使用，不修改请求客户端、拦截器或认证流程
+- 已验证实现提交：`3e7187a841175ed3ef6190f893690c18514cd468`
+- CI：run `29984951947` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+- changed files：`apps/web-ele/src/api/request.ts`、`src/core/request/format-bearer-token.ts`、对应单测、迁移记录和本计划
+- 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
+- 范围：仅本地化 Bearer Token 格式化；未修改请求客户端、拦截器、Token 刷新、重新认证、错误处理、依赖或锁文件
 
 更新规则：每个 PR 完成目标改动后，必须先更新本节中的状态、实际 PR、最终 head 或合并提交、真实验证结果和范围结论，并同步更新下方“新会话交接”，再进行最终 review 与合并。
 
@@ -294,9 +298,9 @@ Playground 独占依赖
 - 唯一功能分支：`feat/vben-559-foundation`
 - 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 本地化全局 Loading；PR #14 本地化偏好覆盖 helper；PR #15 本地化静态路由重置工具；PR #16 本地化登录路由常量；PR #17 本地化路由模块聚合工具；PR #18 本地化 API 地址解析；PR #19 本地化语言目录聚合 helper；PR #20 本地化权限指令
 - 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；Loading、偏好覆盖 helper、路由基础工具、登录路径常量、API 地址解析、语言目录聚合和权限指令判断已本地化；其他运行时仍依赖 workspace 包
-- 当前阶段：PR #21 正在本地化 Bearer Token 格式化
+- 当前阶段：PR #21 已完成第九批实现与 CI，等待最终 review 与合并
 - 当前改动：新增 `src/core/request/format-bearer-token.ts` 与单测；请求头和刷新认证统一使用本地 helper
-- 下一步：完成 PR #21 CI、review 和合并，再选择下一个依赖边界清晰的最小运行时单元
+- 下一步：合并 PR #21 后同步唯一功能分支到最新 main，再选择下一个依赖边界清晰的最小运行时单元
 - 未完成验证：需要本地运行 `pnpm dev` 和 `pnpm dev:ele`，检查登录、菜单、标签页、权限、全局 Loading 和 Element Plus 页面
 - 硬性约束：不提前升级依赖；不引入 TanStack Form；不重写旧表单；不改变业务行为；不删除尚被引用的 workspace 包；每次 PR 合并前更新执行进度和本交接内容
 
