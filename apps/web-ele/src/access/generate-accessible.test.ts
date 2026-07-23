@@ -2,15 +2,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { generateAccessible } from './generate-accessible';
 
+const backend = vi.hoisted(() => ({
+  generateRoutesByBackend: vi.fn(),
+}));
 const frontend = vi.hoisted(() => ({
   generateRoutesByFrontend: vi.fn(),
 }));
 const utils = vi.hoisted(() => ({
   cloneDeep: vi.fn((value) => value),
   generateMenus: vi.fn(() => [{ name: 'menu' }]),
-  generateRoutesByBackend: vi.fn(),
 }));
 
+vi.mock('./generate-routes-backend', () => backend);
 vi.mock('./generate-routes-frontend', () => frontend);
 vi.mock('@vben/utils', () => ({
   ...utils,
@@ -50,7 +53,7 @@ describe('generateAccessible', () => {
   it('generates backend routes and mounts them under the root layout', async () => {
     const router = createRouter();
     const route = { name: 'Dashboard', path: '/dashboard' };
-    utils.generateRoutesByBackend.mockResolvedValue([route]);
+    backend.generateRoutesByBackend.mockResolvedValue([route]);
 
     const result = await generateAccessible('backend', {
       roles: [],
@@ -58,7 +61,7 @@ describe('generateAccessible', () => {
       routes: [],
     } as any);
 
-    expect(utils.generateRoutesByBackend).toHaveBeenCalledTimes(1);
+    expect(backend.generateRoutesByBackend).toHaveBeenCalledTimes(1);
     expect(router.root.children).toEqual([route]);
     expect(router.removeRoute).toHaveBeenCalledWith('Root');
     expect(router.addRoute).toHaveBeenCalledWith(router.root);
@@ -76,7 +79,7 @@ describe('generateAccessible', () => {
       getRoutes: vi.fn(() => []),
       removeRoute: vi.fn(),
     };
-    utils.generateRoutesByBackend.mockResolvedValue([route]);
+    backend.generateRoutesByBackend.mockResolvedValue([route]);
 
     await generateAccessible('backend', {
       router: router as any,
@@ -95,7 +98,7 @@ describe('generateAccessible', () => {
       name: 'Standalone',
       path: '/standalone',
     };
-    utils.generateRoutesByBackend.mockResolvedValue([route]);
+    backend.generateRoutesByBackend.mockResolvedValue([route]);
 
     await generateAccessible('backend', {
       router: router as any,
@@ -116,7 +119,7 @@ describe('generateAccessible', () => {
       name: 'Users',
       path: '/users',
     };
-    utils.generateRoutesByBackend.mockResolvedValue([replacementRoute]);
+    backend.generateRoutesByBackend.mockResolvedValue([replacementRoute]);
 
     await generateAccessible('backend', {
       router: router as any,
@@ -134,7 +137,7 @@ describe('generateAccessible', () => {
     const forbiddenComponent = vi.fn();
 
     frontend.generateRoutesByFrontend.mockResolvedValue([frontendRoute]);
-    utils.generateRoutesByBackend.mockResolvedValue([backendRoute]);
+    backend.generateRoutesByBackend.mockResolvedValue([backendRoute]);
 
     const result = await generateAccessible('mixed', {
       forbiddenComponent,
@@ -166,7 +169,7 @@ describe('generateAccessible', () => {
         redirect: '/settings/custom',
       },
     ];
-    utils.generateRoutesByBackend.mockResolvedValue(generatedRoutes);
+    backend.generateRoutesByBackend.mockResolvedValue(generatedRoutes);
 
     const result = await generateAccessible('backend', {
       router: router as any,
@@ -184,7 +187,7 @@ describe('generateAccessible', () => {
       name: 'Profile',
       path: '/profile',
     };
-    utils.generateRoutesByBackend.mockResolvedValue([route]);
+    backend.generateRoutesByBackend.mockResolvedValue([route]);
 
     const result = await generateAccessible('backend', {
       router: router as any,

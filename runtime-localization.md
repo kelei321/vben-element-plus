@@ -247,4 +247,32 @@
 
 - 新增单元测试，覆盖嵌套路由过滤、公开路由、任一角色匹配、禁止访问菜单保留和组件替换。
 - 更新访问路由编排测试，使其验证本地前端路由生成模块的调用与混合模式顺序。
-- CI 尚未在当前最终提交上完成；`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟验证尚未执行。
+- CI run `29994773192` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+
+## 第十二批：后端路由生成
+
+### 迁移内容
+
+- 将 `generateRoutesByBackend` 迁入 `apps/web-ele/src/access/generate-routes-backend.ts`。
+- `apps/web-ele/src/access/generate-accessible.ts` 的 `backend` 与 `mixed` 模式改为调用本地后端路由生成函数。
+- 将后端路由生成实际需要的树映射和视图路径归一化逻辑收敛在同一模块，不迁移整个通用工具包。
+- 菜单生成和访问路由编排继续复用现有实现，不在本批次扩大迁移范围。
+
+### 行为约束
+
+- 未配置菜单加载函数或未返回菜单数据时继续返回空路由数组。
+- `layoutMap` 的布局组件映射保持不变。
+- 页面路径继续去除相对前缀和 `/views` 前缀，并按需补充 `.vue` 后缀。
+- 缺失页面组件时继续记录错误并回退到 `/_core/fallback/not-found.vue`。
+- 缺少路由名称时继续记录错误但不丢弃路由。
+- 嵌套路由转换顺序、异常记录和重新抛出行为保持不变。
+- 菜单生成、权限 Store、认证、路由定义和业务行为保持不变。
+- 本批次不升级依赖、不修改锁文件，也不删除仍被引用的 workspace 包。
+
+### 验证
+
+- 新增单元测试，覆盖空菜单加载、布局映射、嵌套页面映射、路径归一化、缺失组件回退、缺失名称诊断和异常传播。
+- 更新访问路由编排测试，使其验证本地后端路由生成模块在 `backend` 与 `mixed` 模式中的调用。
+- CI run `30008557646` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
