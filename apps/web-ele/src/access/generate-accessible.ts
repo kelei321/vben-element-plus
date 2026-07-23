@@ -11,12 +11,12 @@ import { defineComponent, h } from 'vue';
 import {
   cloneDeep,
   generateMenus,
-  generateRoutesByBackend,
   isFunction,
   isString,
   mapTree,
 } from '@vben/utils';
 
+import { generateRoutesByBackend } from './generate-routes-backend';
 import { generateRoutesByFrontend } from './generate-routes-frontend';
 
 async function generateAccessible(
