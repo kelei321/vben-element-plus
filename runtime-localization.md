@@ -274,5 +274,34 @@
 
 - 新增单元测试，覆盖空菜单加载、布局映射、嵌套页面映射、路径归一化、缺失组件回退、缺失名称诊断和异常传播。
 - 更新访问路由编排测试，使其验证本地后端路由生成模块在 `backend` 与 `mixed` 模式中的调用。
-- CI run `30008557646` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- CI run `30009729865` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+
+## 第十三批：菜单生成
+
+### 迁移内容
+
+- 将 `generateMenus` 迁入 `apps/web-ele/src/access/generate-menus.ts`。
+- `apps/web-ele/src/access/generate-accessible.ts` 改为调用本地菜单生成函数。
+- 将菜单生成实际需要的递归映射和可见性过滤逻辑收敛在同一模块，不迁移整个通用工具包。
+- 前端路由生成、后端路由生成和访问路由挂载逻辑保持不变。
+
+### 行为约束
+
+- 菜单路径继续优先使用 Router 注册后的最终路径。
+- 菜单名称继续使用 `meta.title`，缺失时回退到路由名称。
+- 图标、激活图标、徽标、徽标类型、徽标样式和排序元数据保持不变。
+- `hideChildrenInMenu` 继续移除子菜单，并优先使用 redirect 作为菜单路径。
+- 普通菜单继续支持 `meta.link` 外链路径。
+- 嵌套菜单继续维护 `parent` 与 `parents` 路径链。
+- 顶层菜单继续按 `order` 排序，`order=0` 不被替换为默认值。
+- `hideInMenu` 继续递归过滤对应菜单树。
+- 权限 Store、认证、路由定义、路由生成和业务行为保持不变。
+- 本批次不升级依赖、不修改锁文件，也不删除仍被引用的 workspace 包。
+
+### 验证
+
+- 新增单元测试，覆盖最终路径解析、菜单元数据、名称回退、嵌套父路径、隐藏子菜单、redirect、外链、隐藏过滤和 `order=0` 排序。
+- 更新访问路由编排测试，使其验证本地菜单生成模块的调用。
+- CI run `30013146806` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
 - `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。

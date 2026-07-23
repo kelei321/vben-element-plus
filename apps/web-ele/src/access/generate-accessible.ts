@@ -8,14 +8,9 @@ import type {
 
 import { defineComponent, h } from 'vue';
 
-import {
-  cloneDeep,
-  generateMenus,
-  isFunction,
-  isString,
-  mapTree,
-} from '@vben/utils';
+import { cloneDeep, isFunction, isString, mapTree } from '@vben/utils';
 
+import { generateMenus } from './generate-menus';
 import { generateRoutesByBackend } from './generate-routes-backend';
 import { generateRoutesByFrontend } from './generate-routes-frontend';
 
