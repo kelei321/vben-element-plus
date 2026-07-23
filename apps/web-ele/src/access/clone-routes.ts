@@ -1,5 +1,7 @@
 import type { RouteRecordRaw } from '@vben/types';
 
+type CloneRecord = Record<PropertyKey, unknown>;
+
 const objectToString = Object.prototype.toString;
 
 function getEnumerableKeys(value: object): PropertyKey[] {
@@ -55,13 +57,13 @@ function cloneValue<T>(value: T, seen: WeakMap<object, unknown>): T {
     return value;
   }
 
-  const source = value as Record<PropertyKey, unknown>;
-  const cloned = (isArray
-    ? []
-    : Object.create(Object.getPrototypeOf(value))) as Record<
-    PropertyKey,
-    unknown
-  >;
+  const source = value as CloneRecord;
+  let cloned: CloneRecord;
+  if (isArray) {
+    cloned = new Array(value.length) as unknown as CloneRecord;
+  } else {
+    cloned = Object.create(Object.getPrototypeOf(value)) as CloneRecord;
+  }
   seen.set(value, cloned);
 
   for (const key of getEnumerableKeys(value)) {
