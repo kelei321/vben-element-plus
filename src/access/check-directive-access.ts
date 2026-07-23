@@ -2,7 +2,7 @@ interface DirectiveAccessOptions {
   accessCodes: readonly string[];
   accessMode: string;
   argument?: string;
-  requiredAccess?: string | readonly string[];
+  requiredAccess?: readonly string[] | string;
   userRoles: readonly string[];
 }
 
