@@ -1,6 +1,5 @@
 import { createApp, watchEffect } from 'vue';
 
-import { registerAccessDirective } from '@vben/access';
 import { registerLoadingDirective } from '@vben/common-ui';
 import { preferences } from '@vben/preferences';
 import { initStores } from '@vben/stores';
@@ -12,6 +11,7 @@ import { ElLoading } from 'element-plus';
 
 import { $t, setupI18n } from '#/locales';
 
+import { registerAccessDirective } from './access/directive';
 import { initComponentAdapter } from './adapter/component';
 import { initSetupVbenForm } from './adapter/form';
 import App from './app.vue';
