@@ -2,13 +2,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { generateAccessible } from './generate-accessible';
 
+const frontend = vi.hoisted(() => ({
+  generateRoutesByFrontend: vi.fn(),
+}));
 const utils = vi.hoisted(() => ({
   cloneDeep: vi.fn((value) => value),
   generateMenus: vi.fn(() => [{ name: 'menu' }]),
   generateRoutesByBackend: vi.fn(),
-  generateRoutesByFrontend: vi.fn(),
 }));
 
+vi.mock('./generate-routes-frontend', () => frontend);
 vi.mock('@vben/utils', () => ({
   ...utils,
   isFunction: (value: unknown) => typeof value === 'function',
@@ -130,7 +133,7 @@ describe('generateAccessible', () => {
     const backendRoute = { name: 'Backend', path: '/backend' };
     const forbiddenComponent = vi.fn();
 
-    utils.generateRoutesByFrontend.mockResolvedValue([frontendRoute]);
+    frontend.generateRoutesByFrontend.mockResolvedValue([frontendRoute]);
     utils.generateRoutesByBackend.mockResolvedValue([backendRoute]);
 
     const result = await generateAccessible('mixed', {
@@ -140,7 +143,7 @@ describe('generateAccessible', () => {
       routes: [],
     } as any);
 
-    expect(utils.generateRoutesByFrontend).toHaveBeenCalledWith(
+    expect(frontend.generateRoutesByFrontend).toHaveBeenCalledWith(
       [],
       ['admin'],
       forbiddenComponent,
