@@ -4,14 +4,14 @@
 
 当前阶段只迁移根应用直接使用、依赖范围清晰且可独立验证的基础能力；不升级依赖、不重写表单、不改变业务行为。
 
-## 第一批：根启动与全局 Loading
+## 第一批：全局 Loading 工具
 
 ### 迁移内容
 
-- 根 `src/main.ts` 不再只转发 `apps/web-ele/src/main.ts`，改为在根入口执行原有偏好初始化、应用启动和 Loading 清理流程。
 - 将 `unmountGlobalLoading` 迁入 `src/shared/utils/loading.ts`。
-- 根入口继续复用 `apps/web-ele/src/bootstrap.ts` 和 `apps/web-ele/src/preferences.ts`，避免在同一批次扩大迁移范围。
-- 保留 `apps/web-ele/src/main.ts`，确保迁移期 `pnpm dev:ele` 仍可作为行为对照。
+- `apps/web-ele/src/main.ts` 保留原有偏好初始化、动态 bootstrap 和挂载顺序，只把 Loading 工具导入切换到根本地源码。
+- 根 `src/main.ts` 继续转发 `apps/web-ele/src/main.ts`，避免根包直接导入尚未声明的 workspace 依赖。
+- `pnpm dev` 与迁移期 `pnpm dev:ele` 使用同一份本地 Loading 工具，便于行为对照。
 
 ### 行为约束
 
