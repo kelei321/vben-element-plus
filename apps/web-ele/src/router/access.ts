@@ -3,7 +3,6 @@ import type {
   GenerateMenuAndRoutesOptions,
 } from '@vben/types';
 
-import { generateAccessible } from '@vben/access';
 import { preferences } from '@vben/preferences';
 
 import { ElMessage } from 'element-plus';
@@ -11,6 +10,8 @@ import { ElMessage } from 'element-plus';
 import { getAllMenusApi } from '#/api';
 import { BasicLayout, IFrameView } from '#/layouts';
 import { $t } from '#/locales';
+
+import { generateAccessible } from '../access/generate-accessible';
 
 const forbiddenComponent = () => import('#/views/_core/fallback/forbidden.vue');
 
@@ -31,9 +32,7 @@ async function generateAccess(options: GenerateMenuAndRoutesOptions) {
       });
       return await getAllMenusApi();
     },
-    // 可以指定没有权限跳转403页面
     forbiddenComponent,
-    // 如果 route.meta.menuVisibleWithForbidden = true
     layoutMap,
     pageMap,
   });
