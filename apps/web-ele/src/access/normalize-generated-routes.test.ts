@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { normalizeGeneratedRoutes } from './normalize-generated-routes';
 
 describe('normalizeGeneratedRoutes', () => {
-  it('recursively adds absolute first-child redirects and preserves existing redirects', () => {
+  it('adds nested absolute redirects and preserves existing redirects', () => {
     const routes = [
       {
         children: [
@@ -30,15 +30,16 @@ describe('normalizeGeneratedRoutes', () => {
     ];
 
     const result = normalizeGeneratedRoutes(routes as any);
+    const nestedRedirect = result[0]?.children?.[0]?.redirect;
 
     expect(result).not.toBe(routes);
     expect(result[0]?.redirect).toBe('/reports/overview');
-    expect(result[0]?.children?.[0]?.redirect).toBe('/reports/overview/detail');
+    expect(nestedRedirect).toBe('/reports/overview/detail');
     expect(result[1]?.redirect).toBe('/settings/custom');
     expect(result[2]?.redirect).toBeUndefined();
   });
 
-  it('wraps keep-alive lazy components with the route name', async () => {
+  it('wraps keep-alive lazy components with route names', async () => {
     const originalComponent = vi.fn(async () => ({
       default: { name: 'OriginalComponent' },
     }));
@@ -50,14 +51,14 @@ describe('normalizeGeneratedRoutes', () => {
     };
 
     normalizeGeneratedRoutes([route] as any);
-
-    const component = await (route.component as () => Promise<any>)();
+    const loadComponent = route.component as () => Promise<any>;
+    const component = await loadComponent();
 
     expect(originalComponent).toHaveBeenCalledTimes(1);
     expect(component.name).toBe('CachedRoute');
   });
 
-  it('returns lazy component modules without a default export unchanged', async () => {
+  it('preserves lazy component modules without default exports', async () => {
     const componentModule = { named: 'component' };
     const route = {
       component: vi.fn(async () => componentModule),
@@ -67,13 +68,13 @@ describe('normalizeGeneratedRoutes', () => {
     };
 
     normalizeGeneratedRoutes([route] as any);
+    const loadComponent = route.component as () => Promise<any>;
+    const component = await loadComponent();
 
-    await expect(
-      (route.component as () => Promise<any>)(),
-    ).resolves.toBe(componentModule);
+    expect(component).toBe(componentModule);
   });
 
-  it('does not wrap components without keep-alive or a string route name', () => {
+  it('skips components without keep-alive or string route names', () => {
     const normalComponent = vi.fn();
     const symbolComponent = vi.fn();
     const routes = [
