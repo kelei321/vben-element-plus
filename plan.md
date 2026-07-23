@@ -225,13 +225,20 @@ Playground 独占依赖
 
 #### PR4：迁入 Vben 必要源码（第四批）
 
-- 状态：已完成，待最终 review 与合并
+- 状态：已完成
 - 实际 PR：#16
-- 已验证实现提交：`2a35e484bfbb7677c5364f7877849a8dcb541f71`
-- CI：run `29974533077` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+- 最终 head：`d2639b3c2cd98dad649d94c70f99e9bfb651f873`
+- 合并提交：`135baa8b737746f696c325c714081fdad9e86cf0`
+- CI：run `29974805504` 的 install、lint、根 typecheck、unit test、根 build 全部通过
 - changed files：路由守卫、核心路由、认证 Store、`src/router/constants.ts`、对应测试、迁移记录和本计划
 - 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
 - 范围：仅本地化 `LOGIN_PATH`；未修改认证流程、路由定义、守卫逻辑、权限、菜单、依赖或锁文件
+
+#### PR4：迁入 Vben 必要源码（第五批）
+
+- 状态：进行中
+- 实际 PR：#17
+- 当前范围：本地化路由模块默认导出合并与核心路由名称收集，不迁移通用树过滤、映射或其他工具
 
 更新规则：每个 PR 完成目标改动后，必须先更新本节中的状态、实际 PR、最终 head 或合并提交、真实验证结果和范围结论，并同步更新下方“新会话交接”，再进行最终 review 与合并。
 
@@ -239,13 +246,13 @@ Playground 独占依赖
 
 - 仓库：`kelei321/vben-element-plus`
 - 源码基线：Vben `v5.5.9`，唯一目标应用为 `apps/web-ele`
-- 当前 main：`65c6ffe3b72c3c911e3438af4c27b2fc7eeed824`
+- 当前 main：`135baa8b737746f696c325c714081fdad9e86cf0`
 - 唯一功能分支：`feat/vben-559-foundation`
-- 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 本地化全局 Loading；PR #14 本地化偏好覆盖 helper；PR #15 本地化静态路由重置工具
-- 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；Loading、偏好覆盖 helper 和静态路由重置工具已本地化；其他运行时仍依赖 workspace 包
-- 当前阶段：PR #16 已完成第四批实现与 CI，等待最终 review 与合并
-- 当前改动：新增 `src/router/constants.ts` 与契约测试；路由守卫、核心路由和认证 Store 统一使用本地 `LOGIN_PATH`
-- 下一步：合并 PR #16 后同步唯一功能分支到最新 main，再选择下一个依赖边界清晰的最小运行时单元
+- 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 本地化全局 Loading；PR #14 本地化偏好覆盖 helper；PR #15 本地化静态路由重置工具；PR #16 本地化登录路由常量
+- 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；Loading、偏好覆盖 helper、路由重置和登录路径常量已本地化；其他运行时仍依赖 workspace 包
+- 当前阶段：PR #17 正在本地化路由模块聚合工具
+- 当前改动：新增 `src/router/route-modules.ts` 与单测；`apps/web-ele/src/router/routes/index.ts` 移除两项 `@vben/utils` 运行时导入
+- 下一步：完成 PR #17 CI、review 和合并，再选择下一个依赖边界清晰的最小运行时单元
 - 未完成验证：需要本地运行 `pnpm dev` 和 `pnpm dev:ele`，检查登录、菜单、标签页、权限、全局 Loading 和 Element Plus 页面
 - 硬性约束：不提前升级依赖；不引入 TanStack Form；不重写旧表单；不改变业务行为；不删除尚被引用的 workspace 包；每次 PR 合并前更新执行进度和本交接内容
 
