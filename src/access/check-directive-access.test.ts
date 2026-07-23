@@ -15,7 +15,7 @@ describe('checkDirectiveAccess', () => {
     ).toBe(true);
   });
 
-  it('checks access codes for backend mode and code directives', () => {
+  it('uses access codes outside frontend role directives', () => {
     expect(
       checkDirectiveAccess({
         accessCodes: ['user:create'],
