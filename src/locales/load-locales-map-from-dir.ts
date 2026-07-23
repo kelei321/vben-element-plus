@@ -1,7 +1,7 @@
 type LocaleImport = () => Promise<unknown>;
 
 type LocaleMessageImport = () => Promise<{
-  default: Record<string, unknown>;
+  default: Record<string, string>;
 }>;
 
 function loadLocalesMapFromDir(
@@ -24,11 +24,11 @@ function loadLocalesMapFromDir(
 
   for (const [locale, files] of Object.entries(localeFiles)) {
     localesMap[locale] = async () => {
-      const messages: Record<string, unknown> = {};
+      const messages: Record<string, string> = {};
 
       for (const [fileName, importLocale] of Object.entries(files)) {
         const localeModule = (await importLocale()) as { default?: unknown };
-        messages[fileName] = localeModule.default;
+        messages[fileName] = localeModule.default as string;
       }
 
       return { default: messages };
