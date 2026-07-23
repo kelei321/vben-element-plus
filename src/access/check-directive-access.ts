@@ -21,9 +21,7 @@ function checkDirectiveAccess({
     ? requiredAccess
     : [requiredAccess];
   const grantedValues =
-    accessMode === 'frontend' && argument === 'role'
-      ? userRoles
-      : accessCodes;
+    accessMode === 'frontend' && argument === 'role' ? userRoles : accessCodes;
   const grantedValueSet = new Set(grantedValues);
 
   return requiredValues.some((value) => grantedValueSet.has(value));
