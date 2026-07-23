@@ -6,6 +6,7 @@ describe('formatBearerToken', () => {
   it('prefixes non-empty tokens with Bearer without trimming', () => {
     expect(formatBearerToken('access-token')).toBe('Bearer access-token');
     expect(formatBearerToken(' access-token ')).toBe('Bearer  access-token ');
+    expect(formatBearerToken('0')).toBe('Bearer 0');
   });
 
   it('returns null for missing tokens', () => {
