@@ -84,4 +84,4 @@ function normalizeViewPath(path: string): string {
   return viewPath.replace(/^\/views/, '');
 }
 
-export { generateRoutesByBackend, normalizeViewPath };
+export { generateRoutesByBackend };
