@@ -154,4 +154,21 @@ describe('generateAccessible', () => {
     expect(result.accessibleRoutes[0]?.redirect).toBe('/reports/overview');
     expect(result.accessibleRoutes[1]?.redirect).toBe('/settings/custom');
   });
+
+  it('does not add a redirect for a relative first-child path', async () => {
+    const router = createRouter();
+    const route = {
+      children: [{ path: 'details' }],
+      name: 'Profile',
+      path: '/profile',
+    };
+    utils.generateRoutesByBackend.mockResolvedValue([route]);
+
+    const result = await generateAccessible('backend', {
+      router: router as any,
+      routes: [],
+    } as any);
+
+    expect(result.accessibleRoutes[0]?.redirect).toBeUndefined();
+  });
 });
