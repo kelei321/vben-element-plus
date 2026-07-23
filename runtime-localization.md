@@ -203,3 +203,24 @@
 - 新增单元测试，覆盖普通 Token、`null`、空字符串和原始内容保留。
 - CI run `29984951947` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
 - `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+
+## 第十批：访问路由编排
+
+### 迁移内容
+
+- 将 `generateAccessible` 迁入 `apps/web-ele/src/access/generate-accessible.ts`。
+- `apps/web-ele/src/router/access.ts` 不再为访问路由编排运行时导入 `@vben/access`。
+- 继续复用 `@vben/utils` 中现有前端路由、后端路由和菜单生成算法，本批次不迁移算法本体。
+
+### 行为约束
+
+- `backend`、`frontend` 和 `mixed` 三种访问模式的生成顺序保持不变。
+- 根布局下的动态路由添加、同名一级路由替换和根路由重新注册保持不变。
+- 子路由自动 redirect、keep-alive 组件命名和菜单生成保持不变。
+- 权限 Store、偏好、认证、路由定义和菜单数据接口保持不变。
+- `@vben/access` 与 `@vben/utils` 仍被其他模块使用，本批次不删除相关 workspace 源码。
+
+### 验证
+
+- 新增单元测试，覆盖后端路由挂载、混合模式顺序、角色传递和 redirect 归一化。
+- 完整 lint、typecheck、unit test 和 root build 结果在本 PR 最终验证时记录。
