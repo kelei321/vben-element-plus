@@ -49,9 +49,9 @@ function generateMenus(
       });
     }
 
-    const resultPath = (hideChildrenInMenu
-      ? redirect || path
-      : link || path) as MenuRecordRaw['path'];
+    const resultPath = (
+      hideChildrenInMenu ? redirect || path : link || path
+    ) as MenuRecordRaw['path'];
 
     return {
       activeIcon,
