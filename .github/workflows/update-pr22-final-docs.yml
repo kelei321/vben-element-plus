@@ -1,0 +1,106 @@
+name: Update PR22 final docs
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - synchronize
+
+permissions:
+  contents: write
+
+jobs:
+  update-docs:
+    if: github.event.pull_request.number == 22 && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.16.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Update validation records
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          plan_path = Path('plan.md')
+          plan = plan_path.read_text(encoding='utf-8')
+          old_progress = '''#### PR4：迁入 Vben 必要源码（第十批）
+
+          - 状态：进行中
+          - 实际 PR：#22
+          - 当前范围：本地化 `generateAccessible` 访问路由编排，继续复用现有前后端路由生成与菜单算法
+          '''
+          new_progress = '''#### PR4：迁入 Vben 必要源码（第十批）
+
+          - 状态：已完成，待最终 review 与合并
+          - 实际 PR：#22
+          - 已验证实现提交：`0e6966256ca0359019990ac6e3ebd543865114ca`
+          - CI：run `29988534717` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+          - changed files：`apps/web-ele/src/access/generate-accessible.ts`、对应单测、`apps/web-ele/src/router/access.ts`、迁移记录和本计划
+          - 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
+          - 范围：仅本地化访问路由编排；未修改前后端路由生成算法、菜单生成算法、权限 Store、认证、依赖或锁文件
+          '''
+          if old_progress not in plan:
+              raise SystemExit('PR22 progress block not found')
+          plan = plan.replace(old_progress, new_progress, 1)
+
+          old_handoff = '''- 当前阶段：PR #22 正在本地化访问路由编排
+          - 当前改动：新增 `apps/web-ele/src/access/generate-accessible.ts` 与单测；`router/access.ts` 移除 `generateAccessible` 的运行时 workspace 导入
+          - 下一步：完成 PR #22 CI、review 和合并，再继续迁移前后端路由生成或菜单算法中的独立边界
+          '''
+          new_handoff = '''- 当前阶段：PR #22 已完成第十批实现与 CI，等待最终 review 与合并
+          - 当前改动：新增 `apps/web-ele/src/access/generate-accessible.ts` 与单测；`router/access.ts` 移除 `generateAccessible` 的运行时 workspace 导入
+          - 下一步：合并 PR #22 后同步唯一功能分支到最新 main，再继续迁移前后端路由生成或菜单算法中的独立边界
+          '''
+          if old_handoff not in plan:
+              raise SystemExit('PR22 handoff block not found')
+          plan_path.write_text(plan.replace(old_handoff, new_handoff, 1), encoding='utf-8')
+
+          runtime_path = Path('runtime-localization.md')
+          runtime = runtime_path.read_text(encoding='utf-8')
+          old_validation = '''- 新增单元测试，覆盖后端路由挂载、混合模式顺序、角色传递和 redirect 归一化。
+          - 完整 lint、typecheck、unit test 和 root build 结果在本 PR 最终验证时记录。
+          '''
+          new_validation = '''- 新增单元测试，覆盖后端路由挂载、`noBasicLayout` 直接注册、同名路由替换、混合模式顺序、角色传递和 redirect 归一化。
+          - CI run `29988534717` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+          - `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+          '''
+          if old_validation not in runtime:
+              raise SystemExit('PR22 validation block not found')
+          runtime_path.write_text(runtime.replace(old_validation, new_validation, 1), encoding='utf-8')
+          PY
+
+      - name: Format documentation
+        run: pnpm exec prettier plan.md runtime-localization.md --write
+
+      - name: Remove temporary workflow
+        run: rm .github/workflows/update-pr22-final-docs.yml
+
+      - name: Commit documentation update
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add plan.md runtime-localization.md .github/workflows/update-pr22-final-docs.yml
+          git commit -m 'docs: update PR22 validation and handoff'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
