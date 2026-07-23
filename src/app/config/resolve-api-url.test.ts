@@ -2,21 +2,10 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { resolveApiUrl } from './resolve-api-url';
 
-interface TestAppConfigWindow extends Window {
-  _VBEN_ADMIN_PRO_APP_CONF_?: {
-    VITE_GLOB_API_URL: string;
-  };
-}
-
-const appWindow = window as TestAppConfigWindow;
-const originalConfig = appWindow._VBEN_ADMIN_PRO_APP_CONF_;
+const originalConfig = window._VBEN_ADMIN_PRO_APP_CONF_;
 
 afterEach(() => {
-  if (originalConfig) {
-    appWindow._VBEN_ADMIN_PRO_APP_CONF_ = originalConfig;
-  } else {
-    delete appWindow._VBEN_ADMIN_PRO_APP_CONF_;
-  }
+  window._VBEN_ADMIN_PRO_APP_CONF_ = originalConfig;
 });
 
 describe('resolveApiUrl', () => {
@@ -32,8 +21,10 @@ describe('resolveApiUrl', () => {
   });
 
   it('reads the injected global API URL in production', () => {
-    appWindow._VBEN_ADMIN_PRO_APP_CONF_ = {
+    window._VBEN_ADMIN_PRO_APP_CONF_ = {
       VITE_GLOB_API_URL: 'https://prod.example.com/api',
+      VITE_GLOB_AUTH_DINGDING_CLIENT_ID: '',
+      VITE_GLOB_AUTH_DINGDING_CORP_ID: '',
     };
 
     expect(resolveApiUrl({}, true)).toBe('https://prod.example.com/api');
