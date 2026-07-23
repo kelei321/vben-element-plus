@@ -69,3 +69,22 @@
 - 新增单元测试，覆盖嵌套静态路由保留、动态路由删除和未命名路由警告。
 - CI run `29973662522` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
 - `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+
+## 第四批：登录路由常量
+
+### 迁移内容
+
+- 将 `LOGIN_PATH` 迁入 `src/router/constants.ts`。
+- 路由守卫、核心路由和认证 Store 统一改为导入本地登录路径常量。
+- 只迁移目标应用直接使用的登录路径，不迁移语言选项或整个常量包。
+
+### 行为约束
+
+- 登录路径继续保持为 `/auth/login`。
+- 未登录拦截、已登录访问登录页的重定向、认证路由默认跳转和退出登录跳转逻辑保持不变。
+- `@vben/constants` 仍可能被其他模块使用，本批次不删除该依赖或对应 workspace 源码。
+
+### 验证
+
+- 新增单元测试，固定 `/auth/login` 路由契约。
+- 完整 lint、typecheck、unit test 和 root build 结果在本 PR 最终验证时记录。
