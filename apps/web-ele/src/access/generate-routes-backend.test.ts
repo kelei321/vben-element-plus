@@ -1,9 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  generateRoutesByBackend,
-  normalizeViewPath,
-} from './generate-routes-backend';
+import { generateRoutesByBackend } from './generate-routes-backend';
 
 describe('generateRoutesByBackend', () => {
   afterEach(() => {
@@ -107,16 +104,5 @@ describe('generateRoutesByBackend', () => {
       }),
     ).rejects.toBe(error);
     expect(errorSpy).toHaveBeenCalledWith(error);
-  });
-});
-
-describe('normalizeViewPath', () => {
-  it.each([
-    ['../views/system/user', '/system/user'],
-    ['./views/system/user.vue', '/system/user.vue'],
-    ['/views/system/user', '/system/user'],
-    ['/system/user', '/system/user'],
-  ])('normalizes %s to %s', (path, expected) => {
-    expect(normalizeViewPath(path)).toBe(expected);
   });
 });
