@@ -108,14 +108,13 @@ describe('generateMenus', () => {
     });
   });
 
-  it('uses external links when children remain visible', () => {
+  it('uses external links and falls back to the route name', () => {
     const router = createRouter([{ name: 'Docs', path: '/docs' }]);
     const menus = generateMenus(
       [
         {
           meta: {
             link: 'https://example.com/docs',
-            title: 'Documentation',
           },
           name: 'Docs',
           path: '/docs',
@@ -124,7 +123,10 @@ describe('generateMenus', () => {
       router as any,
     );
 
-    expect(menus[0]?.path).toBe('https://example.com/docs');
+    expect(menus[0]).toMatchObject({
+      name: 'Docs',
+      path: 'https://example.com/docs',
+    });
   });
 
   it('filters hidden menu trees and sorts top-level order including zero', () => {
