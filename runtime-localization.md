@@ -222,5 +222,6 @@
 
 ### 验证
 
-- 新增单元测试，覆盖后端路由挂载、混合模式顺序、角色传递和 redirect 归一化。
-- 完整 lint、typecheck、unit test 和 root build 结果在本 PR 最终验证时记录。
+- 新增单元测试，覆盖后端路由挂载、`noBasicLayout` 直接注册、同名路由替换、混合模式顺序、角色传递和 redirect 归一化。
+- CI run `29988534717` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
