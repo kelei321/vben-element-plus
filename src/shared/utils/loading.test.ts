@@ -27,8 +27,8 @@ describe('unmountGlobalLoading', () => {
     loadingElement?.dispatchEvent(new Event('transitionend'));
 
     expect(document.querySelector('#__app-loading__')).toBeNull();
-    expect(document.querySelectorAll('[data-app-loading^="inject"]')).toHaveLength(
-      0,
-    );
+    expect(
+      document.querySelectorAll('[data-app-loading^="inject"]'),
+    ).toHaveLength(0);
   });
 });
