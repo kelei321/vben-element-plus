@@ -324,13 +324,24 @@ Playground 独占依赖
 
 #### PR4：迁入 Vben 必要源码（第十三批）
 
-- 状态：实现、文档与完整 CI 已完成，待最终 review 与合并
+- 状态：已完成
 - 实际 PR：#28
-- 已验证文档提交：`1788baa9c4cc3ee7cfa4eadb0deae72defc678a6`
-- CI：run `30013146806` 与 run `30014074391` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+- 最终 head：`03dc277268c2475560ddf473d214839eb83d625f`
+- 合并提交：`1b1f499adbc034f6d74633f68724670af3bbcf15`
+- CI：run `30014649209` 的 install、lint、根 typecheck、unit test、根 build 全部通过
 - changed files：本地菜单生成实现与单测、访问路由编排接入与测试、迁移记录和本计划
 - 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
 - 范围：仅本地化路由到菜单的映射、父路径链、外链与 redirect 路径、顶层排序和隐藏过滤；未修改前后端路由生成、路由挂载、权限 Store、认证、依赖或锁文件
+
+#### PR4：迁入 Vben 必要源码（第十四批）
+
+- 状态：实现、文档与完整 CI 已完成，待最终 review 与合并
+- 实际 PR：#29
+- 已验证文档提交：`02631e88f4b42806c29f44f3daa843bf93265f55`
+- CI：run `30016422758` 与 run `30017260782` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+- changed files：本地生成路由归一化实现与单测、访问路由编排接入与测试、迁移记录和本计划
+- 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
+- 范围：仅本地化生成路由后的递归遍历、KeepAlive 懒加载组件命名和首个绝对子路由 redirect；未修改前后端路由生成、菜单生成、路由挂载、权限 Store、认证、依赖或锁文件
 
 更新规则：每个 PR 完成目标改动后，必须先更新本节中的状态、实际 PR、最终 head 或合并提交、真实验证结果和范围结论，并同步更新下方“新会话交接”，再进行最终 review 与合并。
 
@@ -338,14 +349,14 @@ Playground 独占依赖
 
 - 仓库：`kelei321/vben-element-plus`
 - 源码基线：Vben `v5.5.9`，唯一目标应用为 `apps/web-ele`
-- 当前 main：`40097fbd0db237f859a22655554b0f1663506d80`
-- 当前功能分支：`refactor/localize-menu-generation`
-- 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 至 #22 分批本地化全局 Loading、偏好、路由、请求、语言和权限基础能力；PR #25 本地化前端路由生成；PR #27 本地化后端路由生成；独立 PR #26 修复 Happy DOM 资源测试的真实网络访问
-- 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；访问路由编排、前端路由生成、后端路由生成和菜单生成已本地化；其他运行时仍依赖 workspace 包
-- 当前阶段：PR #28 已完成第十三批实现、迁移记录、计划更新与完整 CI，等待最终 review 与合并
-- 当前改动：新增 `apps/web-ele/src/access/generate-menus.ts` 与单测；`generate-accessible.ts` 改用本地菜单生成；旧编排测试改为 mock 本地模块
-- 下一步：PR #28 合并后从最新 main 新建单一功能分支，检查 `generate-accessible.ts` 剩余的 `cloneDeep`、`isFunction`、`isString`、`mapTree` 运行时导入，再选择一个依赖边界清晰的小能力继续本地化
-- 未完成验证：需要本地运行 `pnpm dev` 和 `pnpm dev:ele`，检查登录、菜单、嵌套菜单、外链、隐藏菜单、标签页、权限、全局 Loading，以及 backend/frontend/mixed 模式的动态路由与菜单
+- 当前 main：`1b1f499adbc034f6d74633f68724670af3bbcf15`
+- 当前功能分支：`refactor/localize-route-normalization`
+- 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 至 #22 分批本地化全局 Loading、偏好、路由、请求、语言和权限基础能力；PR #25 本地化前端路由生成；PR #27 本地化后端路由生成；PR #28 本地化菜单生成；独立 PR #26 修复 Happy DOM 资源测试的真实网络访问
+- 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；访问路由编排、前端路由生成、后端路由生成、菜单生成和生成路由归一化已本地化；`generate-accessible.ts` 仅剩 `cloneDeep` 运行时依赖 `@vben/utils`
+- 当前阶段：PR #29 已完成第十四批实现、迁移记录、计划更新与完整 CI，等待最终 review 与合并
+- 当前改动：新增 `apps/web-ele/src/access/normalize-generated-routes.ts` 与单测；`generate-accessible.ts` 改用本地归一化函数；旧编排测试的 `@vben/utils` mock 收敛为仅 `cloneDeep`
+- 下一步：PR #29 合并后从最新 main 新建单一功能分支，检查并本地化 `generate-accessible.ts` 剩余的 `cloneDeep`，保持路由对象、组件函数和嵌套 meta 的深拷贝行为
+- 未完成验证：需要本地运行 `pnpm dev` 和 `pnpm dev:ele`，检查登录、KeepAlive、嵌套路由、自动 redirect、菜单、标签页、权限、全局 Loading，以及 backend/frontend/mixed 模式的动态路由与菜单
 - 硬性约束：不提前升级依赖；不引入 TanStack Form；不重写旧表单；不改变业务行为；不删除尚被引用的 workspace 包；每次 PR 合并前更新执行进度和本交接内容
 
 ### PR1：冻结 Vben 5.5.9 基线

@@ -18,21 +18,7 @@ const utils = vi.hoisted(() => ({
 vi.mock('./generate-menus', () => menus);
 vi.mock('./generate-routes-backend', () => backend);
 vi.mock('./generate-routes-frontend', () => frontend);
-vi.mock('@vben/utils', () => ({
-  ...utils,
-  isFunction: (value: unknown) => typeof value === 'function',
-  isString: (value: unknown) => typeof value === 'string',
-  mapTree: (routes: any[], mapper: (route: any) => any) => {
-    const visit = (route: any): any => {
-      const next = mapper(route);
-      if (next.children) {
-        next.children = next.children.map((child: any) => visit(child));
-      }
-      return next;
-    };
-    return routes.map((route) => visit(route));
-  },
-}));
+vi.mock('@vben/utils', () => utils);
 
 function createRouter(rootChildren: any[] = []) {
   const root = {

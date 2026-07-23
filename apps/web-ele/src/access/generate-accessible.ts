@@ -1,18 +1,15 @@
-import type { Component, DefineComponent } from 'vue';
-
 import type {
   AccessModeType,
   GenerateMenuAndRoutesOptions,
   RouteRecordRaw,
 } from '@vben/types';
 
-import { defineComponent, h } from 'vue';
-
-import { cloneDeep, isFunction, isString, mapTree } from '@vben/utils';
+import { cloneDeep } from '@vben/utils';
 
 import { generateMenus } from './generate-menus';
 import { generateRoutesByBackend } from './generate-routes-backend';
 import { generateRoutesByFrontend } from './generate-routes-frontend';
+import { normalizeGeneratedRoutes } from './normalize-generated-routes';
 
 async function generateAccessible(
   mode: AccessModeType,
@@ -87,39 +84,7 @@ async function generateRoutes(
     }
   }
 
-  return mapTree(resultRoutes, (route) => {
-    if (
-      route.meta?.keepAlive &&
-      isFunction(route.component) &&
-      route.name &&
-      isString(route.name)
-    ) {
-      const originalComponent = route.component as () => Promise<{
-        default: Component | DefineComponent;
-      }>;
-      route.component = async () => {
-        const component = await originalComponent();
-        if (!component.default) return component;
-        return defineComponent({
-          name: route.name as string,
-          setup(props, { attrs, slots }) {
-            return () => h(component.default, { ...props, ...attrs }, slots);
-          },
-        });
-      };
-    }
-
-    if (route.redirect || !route.children || route.children.length === 0) {
-      return route;
-    }
-    const firstChild = route.children[0];
-    if (!firstChild?.path || !firstChild.path.startsWith('/')) {
-      return route;
-    }
-
-    route.redirect = firstChild.path;
-    return route;
-  });
+  return normalizeGeneratedRoutes(resultRoutes);
 }
 
 export { generateAccessible };

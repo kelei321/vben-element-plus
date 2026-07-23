@@ -305,3 +305,30 @@
 - 更新访问路由编排测试，使其验证本地菜单生成模块的调用。
 - CI run `30013146806` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
 - `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+
+## 第十四批：生成路由归一化
+
+### 迁移内容
+
+- 将生成路由后的递归归一化迁入 `apps/web-ele/src/access/normalize-generated-routes.ts`。
+- `apps/web-ele/src/access/generate-accessible.ts` 改为调用本地归一化函数。
+- 将该流程实际需要的递归映射、KeepAlive 懒加载组件命名和首个子路由 redirect 处理收敛在同一模块，不迁移整个通用树工具包。
+- `generate-accessible.ts` 不再运行时导入 `mapTree`、`isFunction` 和 `isString`，仅继续使用 `cloneDeep`。
+
+### 行为约束
+
+- 继续先处理父路由，再递归处理子路由。
+- 继续返回新的顶层和子路由数组，同时保留对路由节点对象的原位修改语义。
+- 仅在 `keepAlive` 开启、组件为函数且路由名称为字符串时包装懒加载组件。
+- 懒加载模块具有默认导出时继续使用路由名称创建包装组件；缺少默认导出时继续原样返回模块。
+- 已存在的 redirect 继续保留。
+- 未配置 redirect 且首个子路由为绝对路径时继续使用该路径；相对路径继续不自动添加 redirect。
+- 前端路由生成、后端路由生成、菜单生成、路由挂载、权限 Store、认证和业务行为保持不变。
+- 本批次不升级依赖、不修改锁文件，也不删除仍被引用的 workspace 包。
+
+### 验证
+
+- 新增单元测试，覆盖嵌套绝对路径 redirect、已有 redirect、相对子路由、KeepAlive 组件命名、无默认导出模块和不满足包装条件的组件。
+- 保留访问路由编排测试中的 redirect 集成覆盖，并将 `@vben/utils` mock 收敛为仅 `cloneDeep`。
+- CI run `30016422758` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
