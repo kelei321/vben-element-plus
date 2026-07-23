@@ -9,7 +9,7 @@ describe('checkDirectiveAccess', () => {
         accessCodes: [],
         accessMode: 'frontend',
         argument: 'role',
-        requiredAccess: ['admin'],
+        requiredAccess: ['editor', 'admin'],
         userRoles: ['admin'],
       }),
     ).toBe(true);
