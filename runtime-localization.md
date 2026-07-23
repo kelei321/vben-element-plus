@@ -180,4 +180,5 @@
 ### 验证
 
 - 新增单元测试，覆盖角色模式、权限码模式、拒绝访问和空指令值。
-- 完整 lint、typecheck、unit test 和 root build 结果在本 PR 最终验证时记录。
+- CI run `29983662138` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
