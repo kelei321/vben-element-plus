@@ -89,3 +89,24 @@
 - 新增单元测试，固定 `/auth/login` 路由契约。
 - CI run `29974533077` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
 - `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+
+## 第五批：路由模块聚合工具
+
+### 迁移内容
+
+- 将 `mergeRouteModules` 和核心路由名称收集逻辑迁入 `src/router/route-modules.ts`。
+- `apps/web-ele/src/router/routes/index.ts` 不再为这两项能力运行时导入 `@vben/utils`。
+- 仅迁移路由模块聚合与名称收集，不迁移通用树过滤、映射或其他工具。
+
+### 行为约束
+
+- `import.meta.glob` 的加载模式和路由模块默认导出约定保持不变。
+- 缺少默认导出的模块继续按空路由数组处理。
+- 核心路由及嵌套子路由只收集有效的 `name`。
+- 动态路由、静态路由、外部路由和最终导出接口保持不变。
+- `@vben/utils` 仍被其他模块使用，本批次不删除该依赖或对应 workspace 源码。
+
+### 验证
+
+- 新增单元测试，覆盖多模块合并、空模块忽略和嵌套路由名称收集。
+- 完整 lint、typecheck、unit test 和 root build 结果在本 PR 最终验证时记录。
