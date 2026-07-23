@@ -8,11 +8,14 @@ const backend = vi.hoisted(() => ({
 const frontend = vi.hoisted(() => ({
   generateRoutesByFrontend: vi.fn(),
 }));
-const utils = vi.hoisted(() => ({
-  cloneDeep: vi.fn((value) => value),
+const menus = vi.hoisted(() => ({
   generateMenus: vi.fn(() => [{ name: 'menu' }]),
 }));
+const utils = vi.hoisted(() => ({
+  cloneDeep: vi.fn((value) => value),
+}));
 
+vi.mock('./generate-menus', () => menus);
 vi.mock('./generate-routes-backend', () => backend);
 vi.mock('./generate-routes-frontend', () => frontend);
 vi.mock('@vben/utils', () => ({
@@ -65,7 +68,7 @@ describe('generateAccessible', () => {
     expect(router.root.children).toEqual([route]);
     expect(router.removeRoute).toHaveBeenCalledWith('Root');
     expect(router.addRoute).toHaveBeenCalledWith(router.root);
-    expect(utils.generateMenus).toHaveBeenCalledWith([route], router);
+    expect(menus.generateMenus).toHaveBeenCalledWith([route], router);
     expect(result).toEqual({
       accessibleMenus: [{ name: 'menu' }],
       accessibleRoutes: [route],
