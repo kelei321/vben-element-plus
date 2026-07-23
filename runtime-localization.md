@@ -67,4 +67,5 @@
 ### 验证
 
 - 新增单元测试，覆盖嵌套静态路由保留、动态路由删除和未命名路由警告。
-- 完整 lint、typecheck、unit test 和 root build 结果在本 PR 最终验证时记录。
+- CI run `29973662522` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
