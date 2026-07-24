@@ -357,10 +357,10 @@ Playground 独占依赖
 
 #### PR4：迁入 Vben 必要源码（第十六批）
 
-- 状态：实现与首轮完整 CI 已完成，文档提交后待最终 CI、review 与合并
+- 状态：实现、文档与完整 CI 已完成，待最终 review 与合并
 - 实际 PR：#31
-- 已验证实现提交：`c48718cec241cf4f69d8098a77144f52637840d3`
-- CI：run `30057751686` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+- 已验证文档提交：`fddf7ee982093b9db0ae4586c190d043055c634b`
+- CI：run `30057751686` 与 run `30058541675` 的 install、lint、根 typecheck、unit test、根 build 全部通过
 - changed files：本地访问模式桥接与单测、动态路由入口和权限指令接入、迁移记录和本计划
 - 本地验证：`pnpm dev` 与 `pnpm dev:ele` 浏览器冒烟未运行
 - 范围：仅将当前访问模式读取集中到本地桥接，并移除动态路由入口和权限指令对 `@vben/preferences` 的直接运行时导入；未迁移偏好管理器、权限 Store、路由生成算法、权限判断、依赖或锁文件
@@ -375,7 +375,7 @@ Playground 独占依赖
 - 当前功能分支：`refactor/localize-access-mode-bridge`
 - 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 至 #22 分批本地化全局 Loading、偏好、路由、请求、语言和权限基础能力；PR #25 本地化前端路由生成；PR #27 本地化后端路由生成；PR #28 本地化菜单生成；PR #29 本地化生成路由归一化；PR #30 本地化路由配置深拷贝；独立 PR #26 修复 Happy DOM 资源测试的真实网络访问
 - 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；访问路由编排、前端路由生成、后端路由生成、菜单生成、生成路由归一化、路由配置深拷贝和访问模式桥接已本地化；动态路由入口和权限指令已不再直接运行时导入 `@vben/preferences`，本地桥接仍继续使用现有 workspace 偏好管理器
-- 当前阶段：PR #31 已完成第十六批实现、单测和首轮完整 CI，正在补齐迁移记录与计划，等待文档后的最终 CI、review 与合并
+- 当前阶段：PR #31 已完成第十六批实现、单测、迁移记录、计划更新与完整 CI，等待最终 review 与合并
 - 当前改动：新增 `apps/web-ele/src/access/get-access-mode.ts` 与单测；`router/access.ts` 和权限指令改用本地桥接；不缓存访问模式
 - 下一步：PR #31 合并后从最新 main 新建单一功能分支，审查权限指令中的 `@vben/stores` 读取和动态路由入口周边的剩余 workspace runtime import，选择一个依赖边界清晰的小能力继续本地化；不要复制完整 preferences 或 stores
 - 未完成验证：需要本地运行 `pnpm dev` 和 `pnpm dev:ele`，检查登录、KeepAlive、嵌套路由、自动 redirect、菜单、标签页、权限、全局 Loading，以及 backend/frontend/mixed 模式的动态路由与菜单
