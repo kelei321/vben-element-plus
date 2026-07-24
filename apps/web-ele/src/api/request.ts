@@ -10,7 +10,6 @@ import {
   errorMessageResponseInterceptor,
   RequestClient,
 } from '@vben/request';
-import { useAccessStore } from '@vben/stores';
 
 import { ElMessage } from 'element-plus';
 
@@ -19,6 +18,7 @@ import { useAuthStore } from '#/store';
 import { resolveApiUrl } from '../../../../src/app/config/resolve-api-url';
 import { formatBearerToken } from '../../../../src/core/request/format-bearer-token';
 import { refreshTokenApi } from './core';
+import { getRequestAccessContext } from './get-request-access-context';
 
 const apiURL = resolveApiUrl(import.meta.env, import.meta.env.PROD);
 
@@ -32,14 +32,12 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
    */
   async function doReAuthenticate() {
     console.warn('Access token or refresh token is invalid or expired. ');
-    const accessStore = useAccessStore();
+    const { isAccessChecked, setAccessToken, setLoginExpired } =
+      getRequestAccessContext();
     const authStore = useAuthStore();
-    accessStore.setAccessToken(null);
-    if (
-      preferences.app.loginExpiredMode === 'modal' &&
-      accessStore.isAccessChecked
-    ) {
-      accessStore.setLoginExpired(true);
+    setAccessToken(null);
+    if (preferences.app.loginExpiredMode === 'modal' && isAccessChecked) {
+      setLoginExpired(true);
     } else {
       await authStore.logout();
     }
@@ -49,19 +47,19 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
    * 刷新token逻辑
    */
   async function doRefreshToken() {
-    const accessStore = useAccessStore();
+    const { setAccessToken } = getRequestAccessContext();
     const resp = await refreshTokenApi();
     const newToken = resp.data;
-    accessStore.setAccessToken(newToken);
+    setAccessToken(newToken);
     return newToken;
   }
 
   // 请求头处理
   client.addRequestInterceptor({
     fulfilled: async (config) => {
-      const accessStore = useAccessStore();
+      const { accessToken } = getRequestAccessContext();
 
-      config.headers.Authorization = formatBearerToken(accessStore.accessToken);
+      config.headers.Authorization = formatBearerToken(accessToken);
       config.headers['Accept-Language'] = preferences.app.locale;
       return config;
     },

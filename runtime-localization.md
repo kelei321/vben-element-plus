@@ -401,3 +401,27 @@
 - 新增单元测试，覆盖初始权限码与角色读取，以及 Store 值变化后的再次读取，确认桥接不缓存状态。
 - CI run `30059682777` 的 install、lint、根 typecheck、unit test 和根 build全部通过。
 - `pnpm dev`、`pnpm dev:ele` 与 role/code 权限指令浏览器冒烟验证尚未执行。
+
+## 第十八批：请求访问上下文桥接
+
+### 迁移内容
+
+- 新增 `apps/web-ele/src/api/get-request-access-context.ts`，将请求模块使用的 access Token、权限检查状态与对应 Store 写操作集中到单一本地适配器。
+- `apps/web-ele/src/api/request.ts` 改为调用本地桥接，不再直接运行时导入 `@vben/stores`。
+- 本批次不复制或迁移完整 access Store，RequestClient、认证 Store、拦截器和持久化流程保持不变。
+
+### 行为约束
+
+- 每次调用都重新获取当前 access Store，不缓存 Store 实例或请求访问上下文。
+- 返回调用时的 `accessToken` 与 `isAccessChecked`，Token 和登录过期状态写入继续委托现有 Store actions。
+- 重新认证时继续先清空 Token；modal 模式且已完成权限检查时继续标记登录过期，否则继续调用认证 Store 登出。
+- Token 刷新、Authorization Header、Accept-Language Header、响应解包和错误提示行为保持不变。
+- `@vben/stores` 仍被本地桥接、认证 Store和应用其他模块使用，本批次不删除该依赖或 workspace 源码。
+- 本批次不升级依赖、不修改锁文件，也不迁移 Pinia setup、完整 stores 或请求客户端实现。
+
+### 验证
+
+- 新增单元测试，覆盖当前 Token 与权限检查状态读取，以及 Token 和登录过期状态写入的 Store action 委托。
+- 首次 CI run `30062312539` 仅 `pnpm lint` 因 `request.ts` Prettier 格式失败，根 typecheck、unit test 和根 build 均通过。
+- 修复格式后，CI run `30062528689` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev`、`pnpm dev:ele` 与请求认证、Token 刷新、登录过期处理浏览器冒烟验证尚未执行。
