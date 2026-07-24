@@ -357,3 +357,25 @@
 - 更新访问路由编排测试，验证前端路由生成前使用独立的路由配置副本。
 - CI run `30019981822` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
 - `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
+
+## 第十六批：访问模式桥接
+
+### 迁移内容
+
+- 新增 `apps/web-ele/src/access/get-access-mode.ts`，将访问模式读取集中到单一本地适配器。
+- `apps/web-ele/src/router/access.ts` 和 `apps/web-ele/src/access/directive.ts` 改为调用本地桥接，不再直接运行时导入 `@vben/preferences`。
+- 本批次不复制或迁移完整偏好管理器，仍继续使用现有初始化、缓存、响应式状态和持久化能力。
+
+### 行为约束
+
+- 每次调用都从当前 `preferences.app.accessMode` 读取值，不缓存访问模式。
+- `backend`、`frontend` 和 `mixed` 模式值不做转换、默认值或容错处理。
+- 动态路由生成、菜单请求、权限指令角色/权限码判断、权限 Store 和用户 Store 行为保持不变。
+- `@vben/preferences` 仍被应用初始化和本地桥接使用，本批次不删除该依赖或 workspace 源码。
+- 本批次不升级依赖、不修改锁文件，也不迁移完整 preferences 或 stores。
+
+### 验证
+
+- 新增单元测试，覆盖当前访问模式读取以及偏好值变化后的再次读取，确认桥接不缓存状态。
+- CI run `30057751686` 的 install、lint、根 typecheck、unit test 和根 build 全部通过。
+- `pnpm dev` 与 `pnpm dev:ele` 的浏览器冒烟验证尚未执行。
