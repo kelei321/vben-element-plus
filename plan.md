@@ -368,13 +368,24 @@ Playground 独占依赖
 
 #### PR4：迁入 Vben 必要源码（第十七批）
 
-- 状态：实现、文档与完整 CI 已完成，待最终 review 与合并
+- 状态：已完成
 - 实际 PR：#32
-- 已验证文档提交：`8112fc96ebaf344ad622984915ecb77a1b27b453`
-- CI：run `30059682777` 与 run `30060515120` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+- 最终 head：`82c9d2401135ddb3e92532ee5d4690b8d035e8e5`
+- 合并提交：`105d159c0ef956f7751b0759f92357c25eb96006`
+- CI：run `30060822481` 的 install、lint、根 typecheck、unit test、根 build 全部通过
 - changed files：本地权限指令 Store 上下文桥接与单测、权限指令接入、迁移记录和本计划
 - 本地验证：`pnpm dev`、`pnpm dev:ele` 与 role/code 权限指令浏览器冒烟未运行
 - 范围：仅将权限指令所需的 `accessCodes` 与 `userRoles` 读取集中到本地桥接，并移除权限指令对 `@vben/stores` 的直接运行时导入；未迁移 Store 实现、Pinia setup、权限判断、动态路由、认证、依赖或锁文件
+
+#### PR4：迁入 Vben 必要源码（第十八批）
+
+- 状态：实现、迁移记录与完整 CI 已完成，待计划更新、最终 review 与合并
+- 实际 PR：#33
+- 已验证实现提交：`8717289430589577444108f9e0e3e8317555c2b0`
+- CI：首次 run `30062312539` 仅 `pnpm lint` 因 `request.ts` Prettier 格式失败，根 typecheck、unit test 和根 build 均通过；修复后 run `30062528689` 的 install、lint、根 typecheck、unit test、根 build 全部通过
+- changed files：本地请求 access Store 上下文桥接与单测、请求模块接入、迁移记录和本计划
+- 本地验证：`pnpm dev`、`pnpm dev:ele` 与请求认证、Token 刷新、登录过期处理浏览器冒烟未运行
+- 范围：仅将请求模块所需的 `accessToken`、`isAccessChecked` 与 Token/登录过期 Store 写入集中到本地桥接，并移除请求模块对 `@vben/stores` 的直接运行时导入；未迁移 Store 实现、认证 Store、RequestClient、拦截器算法、依赖或锁文件
 
 更新规则：每个 PR 完成目标改动后，必须先更新本节中的状态、实际 PR、最终 head 或合并提交、真实验证结果和范围结论，并同步更新下方“新会话交接”，再进行最终 review 与合并。
 
@@ -382,13 +393,13 @@ Playground 独占依赖
 
 - 仓库：`kelei321/vben-element-plus`
 - 源码基线：Vben `v5.5.9`，唯一目标应用为 `apps/web-ele`
-- 当前 main：`a6d8141be01038b908018d8e54b92d1646aef64f`
-- 当前功能分支：`refactor/localize-directive-store-context`
-- 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 至 #22 分批本地化全局 Loading、偏好、路由、请求、语言和权限基础能力；PR #25 本地化前端路由生成；PR #27 本地化后端路由生成；PR #28 本地化菜单生成；PR #29 本地化生成路由归一化；PR #30 本地化路由配置深拷贝；PR #31 本地化访问模式桥接；独立 PR #26 修复 Happy DOM 资源测试的真实网络访问
-- 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；访问路由编排、前后端路由生成、菜单生成、生成路由归一化、路由配置深拷贝、访问模式桥接和权限指令 Store 上下文桥接已本地化；权限指令已不再直接运行时导入 `@vben/preferences` 或 `@vben/stores`，本地桥接仍继续使用现有 workspace 偏好管理器与 Store
-- 当前阶段：PR #32 已完成第十七批实现、单测、迁移记录、计划更新与完整 CI，等待最终 review 与合并
-- 当前改动：新增 `apps/web-ele/src/access/get-directive-access-context.ts` 与单测；权限指令改用本地桥接读取当前 `accessCodes` 和 `userRoles`，不缓存或复制 Store 状态
-- 下一步：PR #32 合并后从最新 main 新建单一功能分支，审查认证、请求和动态路由周边剩余的直接 `@vben/stores` 运行时导入，选择一个读写边界清晰的小能力继续本地化；不要复制完整 stores 或一次迁移所有 Pinia 状态
+- 当前 main：`105d159c0ef956f7751b0759f92357c25eb96006`
+- 当前功能分支：`refactor/localize-request-access-context`
+- 已完成：PR #1 导入基线；PR #6 收敛依赖范围；PR #7 建立根 Vite 入口；PR #13 至 #22 分批本地化全局 Loading、偏好、路由、请求、语言和权限基础能力；PR #25 本地化前端路由生成；PR #27 本地化后端路由生成；PR #28 本地化菜单生成；PR #29 本地化生成路由归一化；PR #30 本地化路由配置深拷贝；PR #31 本地化访问模式桥接；PR #32 本地化权限指令 Store 上下文桥接；独立 PR #26 修复 Happy DOM 资源测试的真实网络访问
+- 当前结构：根 `src/main.ts` 仍转发到 `apps/web-ele/src/main`；访问路由编排、前后端路由生成、菜单生成、生成路由归一化、路由配置深拷贝、访问模式桥接、权限指令 Store 上下文桥接和请求访问上下文桥接已本地化；权限指令与请求模块已不再直接运行时导入 `@vben/stores`，本地桥接仍继续使用现有 workspace Store
+- 当前阶段：PR #33 已完成第十八批实现、单测、迁移记录与实现 CI，等待计划更新、最终 review 与合并
+- 当前改动：新增 `apps/web-ele/src/api/get-request-access-context.ts` 与单测；`apps/web-ele/src/api/request.ts` 改用本地桥接读取当前 Token 和权限检查状态，并委托现有 Store actions 写入 Token 与登录过期状态
+- 下一步：PR #33 合并后从最新 main 新建单一功能分支，审查认证 Store `apps/web-ele/src/store/auth.ts` 的剩余 `@vben/stores` 读写边界，选择一个边界清晰的小能力继续本地化；不要复制完整 stores 或一次迁移所有认证状态
 - 未完成验证：需要本地运行 `pnpm dev` 和 `pnpm dev:ele`，检查登录、KeepAlive、嵌套路由、自动 redirect、菜单、标签页、权限、全局 Loading，以及 backend/frontend/mixed 模式的动态路由与菜单
 - 硬性约束：不提前升级依赖；不引入 TanStack Form；不重写旧表单；不改变业务行为；不删除尚被引用的 workspace 包；每次 PR 合并前更新执行进度和本交接内容
 
