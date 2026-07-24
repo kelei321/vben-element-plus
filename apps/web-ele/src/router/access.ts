@@ -3,8 +3,6 @@ import type {
   GenerateMenuAndRoutesOptions,
 } from '@vben/types';
 
-import { preferences } from '@vben/preferences';
-
 import { ElMessage } from 'element-plus';
 
 import { getAllMenusApi } from '#/api';
@@ -12,6 +10,7 @@ import { BasicLayout, IFrameView } from '#/layouts';
 import { $t } from '#/locales';
 
 import { generateAccessible } from '../access/generate-accessible';
+import { getAccessMode } from '../access/get-access-mode';
 
 const forbiddenComponent = () => import('#/views/_core/fallback/forbidden.vue');
 
@@ -23,7 +22,7 @@ async function generateAccess(options: GenerateMenuAndRoutesOptions) {
     IFrameView,
   };
 
-  return await generateAccessible(preferences.app.accessMode, {
+  return await generateAccessible(getAccessMode(), {
     ...options,
     fetchMenuListAsync: async () => {
       ElMessage({
