@@ -36,10 +36,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
       getRequestAccessContext();
     const authStore = useAuthStore();
     setAccessToken(null);
-    if (
-      preferences.app.loginExpiredMode === 'modal' &&
-      isAccessChecked
-    ) {
+    if (preferences.app.loginExpiredMode === 'modal' && isAccessChecked) {
       setLoginExpired(true);
     } else {
       await authStore.logout();
