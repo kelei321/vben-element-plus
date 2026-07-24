@@ -1,23 +1,21 @@
 import type { App, Directive, DirectiveBinding } from 'vue';
 
-import { useAccessStore, useUserStore } from '@vben/stores';
-
 import { checkDirectiveAccess } from '../../../../src/access/check-directive-access';
 import { getAccessMode } from './get-access-mode';
+import { getDirectiveAccessContext } from './get-directive-access-context';
 
 function isAccessible(
   element: Element,
   binding: DirectiveBinding<string | string[]>,
 ) {
-  const accessStore = useAccessStore();
-  const userStore = useUserStore();
+  const { accessCodes, userRoles } = getDirectiveAccessContext();
 
   const accessible = checkDirectiveAccess({
-    accessCodes: accessStore.accessCodes,
+    accessCodes,
     accessMode: getAccessMode(),
     argument: binding.arg,
     requiredAccess: binding.value,
-    userRoles: userStore.userRoles,
+    userRoles,
   });
 
   if (!accessible) {
